@@ -195,9 +195,20 @@ async function doAbsen(tipe) {
     payload.keterangan = document.getElementById('ket-izin').value;
   } else {
     try {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {timeout:10000, enableHighAccuracy:true});
+      // Helper function to get position with fallback
+      const getPosition = (options) => new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
       });
+      
+      let pos;
+      try {
+        // Try high accuracy first
+        pos = await getPosition({timeout:15000, enableHighAccuracy:true});
+      } catch (highAccError) {
+        // Fallback to low accuracy if high accuracy fails (common on HTTP or indoor)
+        console.warn('High accuracy failed, trying low accuracy...', highAccError);
+        pos = await getPosition({timeout:15000, enableHighAccuracy:false});
+      }
       const dist = getDistance(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
       payload.latitude = pos.coords.latitude;
       payload.longitude = pos.coords.longitude;
@@ -207,7 +218,12 @@ async function doAbsen(tipe) {
         showAlert('absen-alert', 'Absen ditolak. Jarak Anda ' + dist.toFixed(0) + 'm dari kantor (maks 50m).', 'error');
       }
     } catch(e) {
-      showAlert('absen-alert', 'Gagal mendapatkan lokasi GPS. Pastikan izin lokasi diaktifkan.', 'error');
+      let errMsg = 'Gagal mendapatkan lokasi GPS. ';
+      if (e.code === 1) errMsg += 'Izin lokasi ditolak oleh browser.';
+      else if (e.code === 2) errMsg += 'Sinyal GPS tidak tersedia.';
+      else if (e.code === 3) errMsg += 'Waktu tunggu habis. Coba lagi di area terbuka.';
+      else errMsg += 'Pastikan izin lokasi diaktifkan. Catatan: Browser mungkin memblokir GPS pada koneksi HTTP (non-HTTPS).';
+      showAlert('absen-alert', errMsg, 'error');
       return;
     }
   }
