@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sppg-absensi-v1';
+const CACHE_NAME = 'sppg-absensi-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
