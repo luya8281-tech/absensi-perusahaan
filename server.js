@@ -10,8 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 const HTTPS_PORT = process.env.HTTPS_PORT || 3006;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "15mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "15mb" }));
 app.use(express.static(path.join(__dirname, "public"), {
   etag: false,
   lastModified: false,
@@ -39,9 +39,18 @@ db.exec(`
     longitude REAL,
     jarak_meter REAL,
     keterangan TEXT,
+    foto TEXT,
     FOREIGN KEY(karyawan_id) REFERENCES karyawan(id)
   );
 `);
+
+// Pastikan kolom foto tersedia jika tabel lama belum memilikinya
+try {
+  const tableInfo = db.prepare("PRAGMA table_info(absensi)").all();
+  if (!tableInfo.some(c => c.name === "foto")) {
+    db.exec("ALTER TABLE absensi ADD COLUMN foto TEXT");
+  }
+} catch (e) {}
 
 const countStmt = db.prepare("SELECT COUNT(*) as total FROM karyawan");
 if (countStmt.get().total === 0) {
@@ -74,7 +83,7 @@ if (countStmt.get().total === 0) {
   insertMany(seedData);
 }
 
-// 1. LOGIN API (kompatibel dengan ok & success, user & data, name & nama)
+// 1. LOGIN API
 app.post("/api/login", (req, res) => {
   const { id, password } = req.body || {};
   if (!id || !password) {
@@ -100,7 +109,25 @@ app.post("/api/login", (req, res) => {
   }
 });
 
-// 2. ABSENSI API (mendukung kedua format payload: id/type/lat/lng/distance/note & karyawan_id/tipe/latitude/...)
+// 2. GANTI PASSWORD MANDIRI
+app.post("/api/change-password", (req, res) => {
+  const { id, old_password, new_password } = req.body || {};
+  if (!id || !old_password || !new_password) {
+    return res.status(400).json({ ok: false, success: false, error: "Semua kolom wajib diisi.", message: "Semua kolom wajib diisi." });
+  }
+  const normalizedId = String(id).toUpperCase().trim();
+  const user = db.prepare("SELECT * FROM karyawan WHERE id = ?").get(normalizedId);
+  if (!user || String(user.password).trim() !== String(old_password).trim()) {
+    return res.status(401).json({ ok: false, success: false, error: "Password lama salah.", message: "Password lama salah." });
+  }
+  if (String(new_password).trim().length < 4) {
+    return res.status(400).json({ ok: false, success: false, error: "Password baru minimal 4 karakter.", message: "Password baru minimal 4 karakter." });
+  }
+  db.prepare("UPDATE karyawan SET password = ? WHERE id = ?").run(String(new_password).trim(), user.id);
+  res.json({ ok: true, success: true, message: "Password berhasil diperbarui." });
+});
+
+// 3. ABSENSI API (mendukung selfie foto base64 & geofencing)
 const handleAbsen = (req, res) => {
   const body = req.body || {};
   const karyawan_id = body.karyawan_id || body.id;
@@ -109,45 +136,78 @@ const handleAbsen = (req, res) => {
   const longitude = body.longitude !== undefined ? body.longitude : body.lng;
   const jarak_meter = body.jarak_meter !== undefined ? body.jarak_meter : body.distance;
   const keterangan = body.keterangan !== undefined ? body.keterangan : body.note;
+  const fotoBase64 = body.foto || body.photo || body.image;
   let status = body.status;
 
   if (!karyawan_id || !tipe) {
     return res.status(400).json({ ok: false, success: false, error: "Data absensi tidak lengkap (ID dan Tipe wajib).", message: "Data absensi tidak lengkap." });
   }
 
-  const tipeLower = String(tipe).toLowerCase();
-  if (!status) {
-    if (tipeLower === "izin" || tipeLower === "sakit" || tipeLower === "cuti") {
-      status = tipe.charAt(0).toUpperCase() + tipe.slice(1);
-    } else if (jarak_meter !== undefined && jarak_meter !== null) {
-      status = Number(jarak_meter) <= 50 ? (tipeLower === "pulang" ? "Pulang" : "Hadir") : `Ditolak (Jarak ${Math.round(jarak_meter)}m)`;
-    } else {
-      status = tipeLower === "pulang" ? "Pulang" : "Hadir";
+  // Simpan foto selfie jika ada
+  let fotoPath = null;
+  if (fotoBase64 && typeof fotoBase64 === "string" && fotoBase64.startsWith("data:image")) {
+    try {
+      const base64Data = fotoBase64.replace(/^data:image\/\w+;base64,/, "");
+      const fileName = `selfie_${karyawan_id}_${Date.now()}.jpg`;
+      const uploadDir = path.join(__dirname, "public", "uploads");
+      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+      fs.writeFileSync(path.join(uploadDir, fileName), base64Data, "base64");
+      fotoPath = `/uploads/${fileName}`;
+    } catch (photoErr) {
+      console.error("Gagal menyimpan foto selfie:", photoErr.message);
     }
+  } else if (fotoBase64 && typeof fotoBase64 === "string" && fotoBase64.startsWith("/")) {
+    fotoPath = fotoBase64;
   }
 
   const now = new Date();
   const tanggal = now.toISOString().split("T")[0];
   const waktu = now.toTimeString().split(" ")[0].substring(0, 8);
+  const tipeLower = String(tipe).toLowerCase();
+
+  // Evaluasi jam kerja & status
+  if (!status) {
+    if (tipeLower === "izin" || tipeLower === "sakit" || tipeLower === "cuti") {
+      status = tipe.charAt(0).toUpperCase() + tipe.slice(1);
+    } else if (jarak_meter !== undefined && jarak_meter !== null && Number(jarak_meter) > 50) {
+      status = `Ditolak (Jarak ${Math.round(jarak_meter)}m)`;
+    } else {
+      // Jam kerja masuk: jam 08:00 WIB (08:00:00)
+      if (tipeLower === "masuk") {
+        const jam = parseInt(waktu.split(":")[0], 10);
+        const menit = parseInt(waktu.split(":")[1], 10);
+        if (jam > 8 || (jam === 8 && menit > 15)) {
+          const telatMenit = (jam * 60 + menit) - (8 * 60);
+          status = `Terlambat (${telatMenit}m)`;
+        } else {
+          status = "Hadir";
+        }
+      } else if (tipeLower === "pulang") {
+        status = "Pulang";
+      } else {
+        status = "Hadir";
+      }
+    }
+  }
 
   db.prepare(`
-    INSERT INTO absensi (karyawan_id, tanggal, waktu, tipe, status, latitude, longitude, jarak_meter, keterangan)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(karyawan_id, tanggal, waktu, tipe, status, latitude || null, longitude || null, jarak_meter || null, keterangan || null);
+    INSERT INTO absensi (karyawan_id, tanggal, waktu, tipe, status, latitude, longitude, jarak_meter, keterangan, foto)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(karyawan_id, tanggal, waktu, tipe, status, latitude || null, longitude || null, jarak_meter || null, keterangan || null, fotoPath);
 
   res.json({
     ok: true,
     success: true,
     message: "Absensi berhasil dicatat.",
     status,
-    data: { karyawan_id, tanggal, waktu, tipe, status, jarak_meter }
+    data: { karyawan_id, tanggal, waktu, tipe, status, jarak_meter, foto: fotoPath }
   });
 };
 
 app.post("/api/absen", handleAbsen);
 app.post("/api/absensi", handleAbsen);
 
-// 3. RIWAYAT PER KARYAWAN (mendukung /api/riwayat/:id dan /api/riwayat?id=...)
+// 4. RIWAYAT PER KARYAWAN
 const handleRiwayat = (req, res) => {
   const id = req.params.karyawan_id || req.query.id;
   if (!id) {
@@ -169,7 +229,8 @@ const handleRiwayat = (req, res) => {
     jarak_meter: r.jarak_meter,
     distance: r.jarak_meter,
     keterangan: r.keterangan,
-    note: r.keterangan
+    note: r.keterangan,
+    foto: r.foto
   }));
   res.json({ ok: true, success: true, data: formatted });
 };
@@ -177,14 +238,28 @@ const handleRiwayat = (req, res) => {
 app.get("/api/riwayat/:karyawan_id", handleRiwayat);
 app.get("/api/riwayat", handleRiwayat);
 
-// 4. REKAP SELURUH KARYAWAN (kompatibel dengan format array lama dan object data baru)
+// 5. REKAP SELURUH KARYAWAN (dengan filter tanggal & status)
 const handleRekap = (req, res) => {
-  const rows = db.prepare(`
-    SELECT k.id, k.nama, a.tanggal, a.waktu, a.tipe, a.status, a.jarak_meter, a.keterangan
+  const filterDate = req.query.tanggal || null;
+  const filterStatus = req.query.status || null;
+
+  let query = `
+    SELECT k.id, k.nama, a.tanggal, a.waktu, a.tipe, a.status, a.jarak_meter, a.keterangan, a.foto
     FROM karyawan k
-    LEFT JOIN absensi a ON k.id = a.karyawan_id AND a.tanggal = date('now', 'localtime')
-    ORDER BY k.id ASC
-  `).all().map(r => ({
+    LEFT JOIN absensi a ON k.id = a.karyawan_id
+  `;
+  const params = [];
+
+  if (filterDate) {
+    query += " AND a.tanggal = ? ";
+    params.push(filterDate);
+  } else {
+    query += " AND a.tanggal = date('now', 'localtime') ";
+  }
+
+  query += " ORDER BY k.id ASC";
+
+  let rows = db.prepare(query).all(...params).map(r => ({
     id: r.id,
     nama: r.nama,
     name: r.nama,
@@ -198,11 +273,15 @@ const handleRekap = (req, res) => {
     jarak_meter: r.jarak_meter,
     distance: r.jarak_meter,
     keterangan: r.keterangan,
-    note: r.keterangan
+    note: r.keterangan,
+    foto: r.foto
   }));
 
-  // Jika diminta format murni array atau via endpoint /api/admin/rekap
-  if (req.query.format === 'array') {
+  if (filterStatus && filterStatus !== "all") {
+    rows = rows.filter(r => r.status.toLowerCase().includes(filterStatus.toLowerCase()));
+  }
+
+  if (req.query.format === "array") {
     return res.json(rows);
   }
 
@@ -212,7 +291,7 @@ const handleRekap = (req, res) => {
 app.get("/api/rekap", handleRekap);
 app.get("/api/admin/rekap", handleRekap);
 
-// 5. LIST KARYAWAN
+// 6. LIST KARYAWAN
 app.get("/api/karyawan", (req, res) => {
   const rows = db.prepare("SELECT id, nama, role FROM karyawan ORDER BY id ASC").all().map(r => ({ ...r, name: r.nama }));
   res.json({ ok: true, success: true, data: rows });
@@ -222,12 +301,12 @@ app.get("/api/employees", (req, res) => {
   res.json({ ok: true, success: true, data: rows });
 });
 
-// 6. JALANKAN SERVER HTTP (PORT 3005)
+// 7. JALANKAN SERVER HTTP (PORT 3005)
 http.createServer(app).listen(PORT, "0.0.0.0", () => {
   console.log(`Server Absensi HTTP berjalan di http://0.0.0.0:${PORT}`);
 });
 
-// 7. JALANKAN SERVER HTTPS (PORT 3006)
+// 8. JALANKAN SERVER HTTPS (PORT 3006)
 try {
   const keyPath = path.join(__dirname, "key.pem");
   const certPath = path.join(__dirname, "cert.pem");
