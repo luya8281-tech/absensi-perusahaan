@@ -523,59 +523,73 @@ app.get("/api/riwayat", handleRiwayat);
 
 // 8. REKAP SELURUH KARYAWAN (Admin)
 function handleRekap(req, res) {
-    try {
-        // Tentukan tanggal filter: dari query atau hari ini (WIB)
-        let tanggalFilter = req.query.tanggal;
-        if (!tanggalFilter) {
-            // Hitung tanggal hari ini dalam zona waktu Asia/Jakarta
-            const now = new Date();
-            const wibOffset = 7 * 60 * 60 * 1000; // WIB is UTC+7
-            const wibTime = new Date(now.getTime() + wibOffset);
-            tanggalFilter = wibTime.toISOString().split('T')[0];
-        }
-
-        const employees = db.prepare('SELECT id, nama FROM karyawan ORDER BY id').all();
-        
-        const result = employees.map(emp => {
-            // Ambil record absensi terakhir untuk tanggal tersebut
-            const record = db.prepare('SELECT * FROM absensi WHERE karyawan_id = ? AND tanggal = ? ORDER BY id DESC LIMIT 1').get(emp.id, tanggalFilter);
-            
-            let status = 'Belum Absen';
-            let waktuDisplay = '-';
-            let tipe = '-';
-
-            if (record) {
-                status = record.status; 
-                tipe = record.tipe;
-                // Format waktu ke HH:MM WIB
-                try {
-                    const d = new Date(record.waktu);
-                    // Pastikan formatasi menggunakan locale Indonesia dan timezone Jakarta
-                    waktuDisplay = d.toLocaleTimeString('id-ID', { 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        timeZone: 'Asia/Jakarta' 
-                    }) + ' WIB';
-                } catch(e) {
-                    waktuDisplay = record.waktu;
-                }
-            }
-
-            return { 
-                id: emp.id, 
-                nama: emp.nama, 
-                status: status, 
-                waktu: waktuDisplay,
-                tipe: tipe,
-                tanggal: tanggalFilter
-            };
-        });
-        
-        res.json({ success: true, data: result, tanggal: tanggalFilter });
-    } catch (err) {
-        console.error('Error di handleRekap:', err);
-        res.status(500).json({ success: false, message: err.message });
+  try {
+    let tanggalFilter = req.query.tanggal;
+    if (!tanggalFilter) {
+      const now = new Date();
+      tanggalFilter = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
     }
+
+    const employees = db.prepare('SELECT id, nama FROM karyawan ORDER BY id ASC').all();
+    
+    const result = employees.map(emp => {
+      const record = db.prepare(`
+        SELECT a.*, c.nama as cabang_nama 
+        FROM absensi a 
+        LEFT JOIN cabang c ON a.cabang_id = c.id 
+        WHERE a.karyawan_id = ? AND a.tanggal = ? 
+        ORDER BY a.id DESC LIMIT 1
+      `).get(emp.id, tanggalFilter);
+
+      let status = 'Belum Absen';
+      let waktuDisplay = '-';
+      let tipe = '-';
+      let foto = null;
+      let cabangNama = '-';
+      let jarakMeter = null;
+      let deviceId = null;
+      let shiftId = 'pagi';
+
+      if (record) {
+        status = record.status;
+        tipe = record.tipe;
+        foto = record.foto;
+        cabangNama = record.cabang_nama || 'Kantor Cipaeh';
+        jarakMeter = record.jarak_meter;
+        deviceId = record.device_id;
+        shiftId = record.shift_id || 'pagi';
+        
+        if (record.waktu) {
+          const parts = record.waktu.split(':');
+          waktuDisplay = parts.length >= 2 ? `${parts[0]}:${parts[1]} WIB` : record.waktu;
+        }
+      }
+
+      return {
+        id: emp.id,
+        nama: emp.nama,
+        name: emp.nama,
+        status: status,
+        waktu: waktuDisplay,
+        time: waktuDisplay,
+        tipe: tipe,
+        type: tipe,
+        tanggal: tanggalFilter,
+        date: tanggalFilter,
+        foto: foto,
+        cabang_nama: cabangNama,
+        jarak_meter: jarakMeter,
+        distance: jarakMeter,
+        device_id: deviceId,
+        shift_id: shiftId
+      };
+    });
+
+    res.json({ ok: true, success: true, data: result, tanggal: tanggalFilter });
+  } catch (err) {
+    console.error('Error di handleRekap:', err);
+    res.status(500).json({ ok: false, success: false, message: err.message });
+  }
 }
 
 app.get("/api/rekap", handleRekap);
