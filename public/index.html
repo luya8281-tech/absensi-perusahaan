@@ -33,40 +33,45 @@
   --radius-md: 14px;
   --radius-sm: 10px;
 
-  /* iPhone Fluid Glass - Dark (Default) */
-  --bg: #06080d;
-  --glass-card: rgba(255, 255, 255, 0.05);
-  --glass-card-nested: rgba(255, 255, 255, 0.04);
-  --glass-blur: blur(36px) saturate(220%) brightness(1.05);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.16);
-  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  --text: #f8fafc;
+  /* iPhone Fluid Glass - Translucent Smoky White-Grey Material (Campuran Putih-Abu Transparan) */
+  --bg: #0f141d;
+  --bg-gradient: radial-gradient(ellipse at 50% -15%, #242d3e 0%, #121722 55%, #0a0d14 100%);
+  --glass-card: linear-gradient(135deg, rgba(255, 255, 255, 0.13) 0%, rgba(195, 208, 225, 0.06) 50%, rgba(145, 160, 182, 0.11) 100%);
+  --glass-card-nested: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(180, 195, 215, 0.04) 100%);
+  --glass-blur: blur(34px) saturate(190%) contrast(104%) brightness(1.06);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.22);
+  --glass-border-specular: 1px solid rgba(255, 255, 255, 0.40);
+  --glass-shadow: 0 18px 42px -12px rgba(0, 0, 0, 0.52), inset 0 1px 1px 0 rgba(255, 255, 255, 0.36), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.22);
+  --text: #f1f5f9;
   --text-muted: #94a3b8;
-  --input-bg: rgba(255, 255, 255, 0.06);
-  --nav-bg: rgba(12, 16, 26, 0.72);
-  --modal-bg: rgba(15, 23, 42, 0.85);
-  --weather-card-bg: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(15, 23, 42, 0.45) 100%);
+  --input-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.10) 0%, rgba(175, 190, 210, 0.05) 100%);
+  --nav-bg: rgba(15, 21, 32, 0.78);
+  --modal-bg: linear-gradient(145deg, rgba(24, 31, 46, 0.90) 0%, rgba(13, 17, 27, 0.96) 100%);
+  --weather-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(148, 163, 184, 0.10) 50%, rgba(30, 41, 59, 0.40) 100%);
 }
 
 [data-theme="light"] {
-  /* iPhone Fluid Glass - Light */
-  --bg: #f8fafc;
-  --glass-card: rgba(255, 255, 255, 0.55);
-  --glass-card-nested: rgba(255, 255, 255, 0.45);
-  --glass-blur: blur(36px) saturate(200%) brightness(1.02);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
-  --glass-shadow: 0 16px 40px -10px rgba(100, 116, 139, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  /* iPhone Fluid Glass - Light Titanium (Translucent Frosted White-Grey) */
+  --bg: #cbd5e1;
+  --bg-gradient: radial-gradient(ellipse at 50% -10%, #e2e8f0 0%, #cbd5e1 55%, #94a3b8 100%);
+  --glass-card: linear-gradient(135deg, rgba(255, 255, 255, 0.58) 0%, rgba(220, 228, 238, 0.38) 50%, rgba(190, 202, 218, 0.48) 100%);
+  --glass-card-nested: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(210, 220, 232, 0.32) 100%);
+  --glass-blur: blur(34px) saturate(190%) contrast(104%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.72);
+  --glass-border-specular: 1px solid rgba(255, 255, 255, 0.92);
+  --glass-shadow: 0 16px 38px -10px rgba(71, 85, 105, 0.22), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.08);
   --text: #0f172a;
-  --text-muted: #64748b;
-  --input-bg: rgba(255, 255, 255, 0.75);
-  --nav-bg: rgba(255, 255, 255, 0.8);
-  --modal-bg: rgba(255, 255, 255, 0.94);
-  --weather-card-bg: linear-gradient(135deg, rgba(219, 234, 254, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%);
+  --text-muted: #475569;
+  --input-bg: rgba(255, 255, 255, 0.60);
+  --nav-bg: rgba(215, 225, 238, 0.82);
+  --modal-bg: linear-gradient(145deg, rgba(238, 242, 248, 0.92) 0%, rgba(218, 226, 238, 0.96) 100%);
+  --weather-card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(200, 214, 232, 0.55) 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font); -webkit-tap-highlight-color: transparent; }
 body {
-  background: var(--bg);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   padding-bottom: 96px;
@@ -77,16 +82,22 @@ body {
 
 /* Ambient Fluid Glow Background */
 .ambient-glow-1 {
-  position: fixed; top: -140px; left: -100px; width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.32) 0%, rgba(139, 92, 246, 0.16) 50%, transparent 70%);
-  border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: -1;
-  animation: floatSlow1 20s ease-in-out infinite alternate;
+  position: fixed; top: -140px; left: -100px; width: 440px; height: 440px;
+  background: radial-gradient(circle, rgba(235, 243, 255, 0.16) 0%, rgba(148, 163, 184, 0.08) 45%, transparent 70%);
+  border-radius: 50%; filter: blur(75px); pointer-events: none; z-index: -1;
+  animation: floatSlow1 22s ease-in-out infinite alternate;
 }
 .ambient-glow-2 {
-  position: fixed; top: 35%; right: -120px; width: 420px; height: 420px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(59, 130, 246, 0.14) 50%, transparent 70%);
+  position: fixed; top: 35%; right: -120px; width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, rgba(148, 163, 184, 0.08) 50%, transparent 70%);
+  border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1;
+  animation: floatSlow2 26s ease-in-out infinite alternate-reverse;
+}
+.ambient-glow-3 {
+  position: fixed; bottom: -100px; left: 20%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(148, 163, 184, 0.05) 50%, transparent 70%);
   border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: -1;
-  animation: floatSlow2 24s ease-in-out infinite alternate-reverse;
+  animation: floatSlow1 28s ease-in-out infinite alternate-reverse;
 }
 @keyframes floatSlow1 { 0% { transform: translate(0, 0); } 100% { transform: translate(40px, 50px) scale(1.1); } }
 @keyframes floatSlow2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-40px, -40px) scale(1.08); } }
@@ -100,6 +111,7 @@ body {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
+  border-top: var(--glass-border-specular);
   border-radius: var(--radius-xl);
   padding: 18px;
   margin-bottom: 14px;
@@ -297,12 +309,108 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .drawer-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; opacity: 0.85; }
 
 /* Modals */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1010; padding: 16px; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; z-index: 1010; padding: 16px; }
 .modal-content {
-  background: var(--modal-bg); border: var(--glass-border); border-radius: var(--radius-xl);
+  background: var(--modal-bg); border: var(--glass-border); border-top: var(--glass-border-specular); border-radius: var(--radius-xl);
   width: 100%; max-width: 420px; padding: 20px; text-align: center;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.35);
   max-height: 90vh; overflow-y: auto; backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Biometric Sensor Scanner Pod */
+.bio-sensor-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0 14px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bio-sensor-pod {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.16) 0%, rgba(180, 195, 215, 0.08) 50%, rgba(140, 155, 175, 0.14) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.45), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s;
+}
+.bio-sensor-pod:active, .bio-sensor-pod.scanning {
+  transform: scale(0.96);
+  box-shadow: 0 0 35px var(--primary-glow), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  border-color: #60a5fa;
+}
+.bio-sensor-pod.success {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px var(--success-glow), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+  border-color: #10b981;
+}
+.bio-ring-svg {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 136px;
+  height: 136px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.bio-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 4;
+}
+.bio-ring-progress {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 389;
+  stroke-dashoffset: 389;
+  transition: stroke-dashoffset 0.05s linear, stroke 0.3s;
+}
+.bio-sensor-pod.success .bio-ring-progress {
+  stroke: #10b981;
+}
+.bio-fingerprint-svg {
+  width: 58px;
+  height: 58px;
+  stroke: rgba(255, 255, 255, 0.85);
+  fill: none;
+  stroke-width: 1.8;
+  transition: stroke 0.3s, transform 0.2s;
+  pointer-events: none;
+}
+.bio-sensor-pod.scanning .bio-fingerprint-svg {
+  stroke: #60a5fa;
+  animation: bioScanPulse 1.2s infinite alternate;
+}
+.bio-sensor-pod.success .bio-fingerprint-svg {
+  stroke: #10b981;
+}
+@keyframes bioScanPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 4px #60a5fa); }
+  100% { transform: scale(1.08); filter: drop-shadow(0 0 12px #3b82f6); }
+}
+.bio-pulse-waves {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  animation: bioWaveRotate 15s linear infinite;
+  pointer-events: none;
+}
+@keyframes bioWaveRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Biometric Camera Box */
@@ -348,6 +456,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <!-- Ambient Fluid Glow Background -->
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
+<div class="ambient-glow-3"></div>
 
 <div class="container">
 
@@ -478,10 +587,11 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
               </button>
             </div>
 
-            <!-- Tombol Verifikasi Sidik Jari (WebAuthn Native Fingerprint) -->
-            <button class="btn btn-primary" onclick="triggerFingerprintAttendance()" style="margin-bottom:8px;background:linear-gradient(135deg,#1d4ed8,#2563eb);">
+            <!-- Tombol Verifikasi Sidik Jari (WebAuthn & Biometrik Fluid Glass) -->
+            <button class="btn btn-primary" id="btn-presensi-fingerprint" onclick="triggerFingerprintAttendance()" style="margin-bottom:8px;background:linear-gradient(135deg,rgba(37,99,235,0.85),rgba(59,130,246,0.85));backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
-              Verifikasi Sidik Jari (Biometrik)
+              <span>Presensi Sidik Jari (Biometrik)</span>
+              <span id="presensi-bio-pill" class="badge" style="margin-left:auto;font-size:10px;background:rgba(255,255,255,0.2);color:#fff;">Periksa</span>
             </button>
 
             <div style="display:flex;gap:8px;">
@@ -576,6 +686,35 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
             <div id="profile-device-id" style="font-size:11px;color:var(--text-muted);margin-top:6px;font-family:monospace;">DEV-UNKNOWN</div>
           </div>
 
+          <!-- KARTU PENDAFTARAN SENSOR BIOMETRIK -->
+          <div class="fluid-card" id="card-biometric-settings">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:36px;height:36px;border-radius:10px;background:rgba(59,130,246,0.15);border:var(--glass-border);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
+                </div>
+                <div>
+                  <h3 style="font-size:14px;font-weight:700;">Sensor Biometrik &amp; Sidik Jari</h3>
+                  <p style="font-size:11px;color:var(--text-muted);">Presensi instan dengan autentikasi perangkat</p>
+                </div>
+              </div>
+              <span id="profile-bio-badge" class="badge">Memeriksa...</span>
+            </div>
+
+            <div id="bio-status-info" style="font-size:12px;color:var(--text-muted);margin-bottom:14px;background:var(--glass-card-nested);border:var(--glass-border);padding:10px 12px;border-radius:var(--radius-sm);">
+              Memeriksa status pendaftaran sidik jari perangkat...
+            </div>
+
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-primary" id="btn-bio-register" onclick="openBiometricRegisterModal()" style="flex:1;">
+                Daftarkan Sidik Jari
+              </button>
+              <button class="btn btn-secondary hidden" id="btn-bio-unregister" onclick="unregisterBiometrics()" style="color:var(--danger);border-color:rgba(239,68,68,0.3);">
+                Hapus
+              </button>
+            </div>
+          </div>
+
           <div class="fluid-card">
             <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">Ganti Password Akun</h3>
             <div id="pass-alert"></div>
@@ -642,9 +781,13 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
         <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Presensi Cepat via Teks / QR</span>
       </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); openBiometricRegisterModal()">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
+        <span>Daftarkan Sidik Jari</span>
+      </li>
       <li class="drawer-item" onclick="toggleSidebar(false); triggerFingerprintAttendance()">
         <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
-        <span>Verifikasi Sidik Jari</span>
+        <span>Presensi Sidik Jari</span>
       </li>
       <li class="drawer-item" onclick="toggleSidebar(false); toggleLeaveModal(true)">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -709,6 +852,94 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
       <button class="btn btn-primary" onclick="captureAndSubmitAttendance()">Ambil Foto & Absen</button>
       <button class="btn btn-secondary" onclick="skipSelfieAndSubmit()">Lanjut Tanpa Foto</button>
       <button class="btn" style="background:transparent;color:var(--text-muted);font-size:12px;" onclick="closeCameraModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DAFTARKAN SIDIK JARI BIOMETRIK -->
+<div id="biometric-register-modal" class="modal-backdrop hidden" onclick="if(event.target===this) closeBiometricRegisterModal()">
+  <div class="modal-content" style="max-width:390px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 style="font-size:16px;font-weight:800;">Daftarkan Sidik Jari</h3>
+      <button class="btn-icon" style="width:32px;height:32px;" onclick="closeBiometricRegisterModal()">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+      Tautkan sensor biometrik perangkat ini ke akun Anda untuk presensi instan.
+    </p>
+
+    <!-- Scanner Pod -->
+    <div class="bio-sensor-wrapper">
+      <div class="bio-pulse-waves"></div>
+      <div id="bio-register-pad" class="bio-sensor-pod">
+        <svg class="bio-ring-svg" viewBox="0 0 136 136">
+          <circle class="bio-ring-track" cx="68" cy="68" r="62"></circle>
+          <circle id="bio-reg-progress-ring" class="bio-ring-progress" cx="68" cy="68" r="62"></circle>
+        </svg>
+        <svg class="bio-fingerprint-svg" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 0 0-6.88 17.23"/>
+          <path d="M12 6a6 6 0 0 0-4.13 10.34"/>
+          <path d="M12 10a2 2 0 0 0-1.38 3.45"/>
+          <path d="M12 14v4"/>
+          <path d="M16 12a4 4 0 0 1-4 4"/>
+          <path d="M20 12a8 8 0 0 0-8-8"/>
+        </svg>
+      </div>
+      <div id="bio-reg-pct" style="font-size:13px;font-weight:800;color:var(--primary);margin-top:12px;">0%</div>
+      <div id="bio-reg-status" style="font-size:11.5px;color:var(--text-muted);margin-top:4px;text-align:center;max-width:260px;">
+        Sentuh &amp; tahan sensor selama 1.5 detik
+      </div>
+    </div>
+
+    <div style="background:var(--glass-card-nested);border:var(--glass-border);padding:10px 12px;border-radius:12px;margin:12px 0;text-align:left;font-size:11.5px;color:var(--text-muted);">
+      <div style="font-weight:700;color:var(--text);margin-bottom:2px;">Perangkat Terdeteksi:</div>
+      <div id="bio-detected-device" style="font-family:monospace;font-size:11px;">Mendeteksi...</div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary" onclick="closeBiometricRegisterModal()" style="flex:1;">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VERIFIKASI PRESENSI SIDIK JARI -->
+<div id="biometric-verify-modal" class="modal-backdrop hidden" onclick="if(event.target===this) closeBiometricVerifyModal()">
+  <div class="modal-content" style="max-width:390px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 style="font-size:16px;font-weight:800;">Presensi Sidik Jari</h3>
+      <button class="btn-icon" style="width:32px;height:32px;" onclick="closeBiometricVerifyModal()">✕</button>
+    </div>
+
+    <!-- Tipe Presensi Toggle (Masuk / Pulang) -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button id="bio-type-masuk" class="btn btn-primary" style="flex:1;padding:8px;font-size:12px;" onclick="setBioVerifyType('Masuk')">Absen Masuk</button>
+      <button id="bio-type-pulang" class="btn btn-secondary" style="flex:1;padding:8px;font-size:12px;" onclick="setBioVerifyType('Pulang')">Absen Pulang</button>
+    </div>
+
+    <!-- Scanner Pod -->
+    <div class="bio-sensor-wrapper">
+      <div class="bio-pulse-waves"></div>
+      <div id="bio-verify-pad" class="bio-sensor-pod">
+        <svg class="bio-ring-svg" viewBox="0 0 136 136">
+          <circle class="bio-ring-track" cx="68" cy="68" r="62"></circle>
+          <circle id="bio-ver-progress-ring" class="bio-ring-progress" cx="68" cy="68" r="62"></circle>
+        </svg>
+        <svg class="bio-fingerprint-svg" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 0 0-6.88 17.23"/>
+          <path d="M12 6a6 6 0 0 0-4.13 10.34"/>
+          <path d="M12 10a2 2 0 0 0-1.38 3.45"/>
+          <path d="M12 14v4"/>
+          <path d="M16 12a4 4 0 0 1-4 4"/>
+          <path d="M20 12a8 8 0 0 0-8-8"/>
+        </svg>
+      </div>
+      <div id="bio-ver-pct" style="font-size:13px;font-weight:800;color:var(--primary);margin-top:12px;">0%</div>
+      <div id="bio-ver-status" style="font-size:11.5px;color:var(--text-muted);margin-top:4px;text-align:center;max-width:260px;">
+        Sentuh &amp; tahan sensor selama 1 detik
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-secondary" onclick="closeBiometricVerifyModal()" style="flex:1;">Tutup</button>
     </div>
   </div>
 </div>
@@ -940,6 +1171,7 @@ function goToTab(index) {
 
   if (index === 0) {
     setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
+    checkBiometricStatus();
   } else if (index === 1) {
     if (currentUser && currentUser.role === 'admin') {
       loadAdminData();
@@ -947,6 +1179,8 @@ function goToTab(index) {
     } else {
       loadEmployeeHistory();
     }
+  } else if (index === 2) {
+    checkBiometricStatus();
   }
 }
 
@@ -1365,6 +1599,7 @@ function setupDashboardView() {
   initMap();
   refreshGPS();
   initSwipeGestures();
+  checkBiometricStatus();
 
   if (isAdmin) {
     loadAdminData();
@@ -1513,59 +1748,421 @@ async function executeAttendanceSubmit(photoData, isBiometric = false) {
   }
 }
 
-/* NATIVE WEBAUTHN FINGERPRINT VERIFICATION */
-async function triggerFingerprintAttendance(type = 'Masuk') {
-  activeAttendanceType = type;
-  if (!window.PublicKeyCredential) {
-    return alert('Browser atau perangkat ini belum mendukung standar WebAuthn Biometrik.');
-  }
+/* =========================================================================
+   BIOMETRIC SENSOR SYSTEM: REGISTRATION, VERIFICATION & FLUID GLASS SCANNER
+   ========================================================================= */
+
+let isBiometricRegistered = false;
+let bioDetectedInfo = 'Perangkat Tidak Dikenal';
+
+function getDeviceDescription() {
+  const ua = navigator.userAgent;
+  let dev = 'Browser';
+  if (/iPhone/i.test(ua)) dev = 'Apple iPhone (Touch ID / Face ID)';
+  else if (/iPad/i.test(ua)) dev = 'Apple iPad';
+  else if (/Android/i.test(ua)) dev = 'Android Device (Fingerprint)';
+  else if (/Windows/i.test(ua)) dev = 'Windows PC (Hello/Biometric)';
+  else if (/Macintosh/i.test(ua)) dev = 'Mac (Touch ID)';
+  else if (/Linux/i.test(ua)) dev = 'Linux Workstation';
+  return `${dev} · ${navigator.platform || ''}`;
+}
+
+async function checkBiometricStatus() {
+  if (!currentUser) return;
+  bioDetectedInfo = getDeviceDescription();
+  const devEl = $('bio-detected-device');
+  if (devEl) devEl.textContent = bioDetectedInfo;
+
+  const badgeProfile = $('profile-bio-badge');
+  const infoProfile = $('bio-status-info');
+  const btnReg = $('btn-bio-register');
+  const btnUnreg = $('btn-bio-unregister');
+  const pillPresensi = $('presensi-bio-pill');
 
   try {
-    const challenge = new Uint8Array(32);
-    window.crypto.getRandomValues(challenge);
-
-    const credentialOptions = {
-      challenge: challenge,
-      rp: { name: 'SPPG Onyam Presensi', id: window.location.hostname },
-      user: {
-        id: Uint8Array.from(currentUser.id, c => c.charCodeAt(0)),
-        name: currentUser.id,
-        displayName: currentUser.name || currentUser.nama || currentUser.id
-      },
-      pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
-      authenticatorSelection: {
-        authenticatorAttachment: 'platform',
-        userVerification: 'required'
-      },
-      timeout: 60000
-    };
-
-    let cred = null;
-    try {
-      cred = await navigator.credentials.create({ publicKey: credentialOptions });
-    } catch(errCreate) {
-      cred = await navigator.credentials.get({
-        publicKey: {
-          challenge: challenge,
-          userVerification: 'required',
-          rpId: window.location.hostname,
-          timeout: 60000
-        }
-      });
-    }
-
-    if (cred) {
-      alertBox('gps-alert', 'success', 'Sidik jari berhasil diverifikasi. Mencatat presensi...');
-      executeAttendanceSubmit(null, true);
-    }
-  } catch(err) {
-    console.warn('Biometric error:', err);
-    if (err.name === 'NotAllowedError') {
-      alert('Verifikasi sidik jari dibatalkan oleh pengguna.');
+    const res = await fetch(`/api/biometric/status/${currentUser.id}`);
+    const data = await res.json();
+    if (data.ok && data.registered) {
+      isBiometricRegistered = true;
+      if (badgeProfile) {
+        badgeProfile.className = 'badge badge-hadir';
+        badgeProfile.textContent = 'Terdaftar (Aktif)';
+      }
+      if (infoProfile) {
+        infoProfile.innerHTML = `<strong>Tersinkronisasi:</strong> ${data.data.device_info || bioDetectedInfo}<br><span style="font-size:11px;color:var(--text-muted);">Didaftarkan: ${data.data.registered_at || '-'}</span>`;
+      }
+      if (btnReg) btnReg.textContent = 'Daftarkan Ulang';
+      if (btnUnreg) btnUnreg.classList.remove('hidden');
+      if (pillPresensi) {
+        pillPresensi.textContent = 'Aktif';
+        pillPresensi.style.background = 'rgba(16,185,129,0.3)';
+      }
     } else {
-      alert('Sensor biometrik tidak dapat diakses (' + (err.message || err.name) + '). Gunakan tombol Absen biasa atau Token Kios.');
+      isBiometricRegistered = false;
+      if (badgeProfile) {
+        badgeProfile.className = 'badge badge-warn';
+        badgeProfile.textContent = 'Belum Didaftarkan';
+      }
+      if (infoProfile) {
+        infoProfile.textContent = 'Sensor sidik jari belum didaftarkan untuk perangkat ini. Daftarkan sekarang untuk presensi cepat 1-sentuhan.';
+      }
+      if (btnReg) btnReg.textContent = 'Daftarkan Sidik Jari';
+      if (btnUnreg) btnUnreg.classList.add('hidden');
+      if (pillPresensi) {
+        pillPresensi.textContent = 'Daftar';
+        pillPresensi.style.background = 'rgba(245,158,11,0.3)';
+      }
+    }
+  } catch (e) {
+    console.warn('Gagal cek status biometrik:', e);
+  }
+}
+
+async function unregisterBiometrics() {
+  if (!currentUser) return;
+  if (!confirm('Apakah Anda yakin ingin menghapus pendaftaran sidik jari perangkat ini?')) return;
+
+  try {
+    const res = await fetch('/api/biometric/unregister', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ karyawan_id: currentUser.id })
+    });
+    const data = await res.json();
+    if (data.ok || data.success) {
+      localStorage.removeItem('bio_token_' + currentUser.id);
+      alertBox('gps-alert', 'success', 'Pendaftaran sidik jari berhasil dihapus.');
+      checkBiometricStatus();
+    } else {
+      alert(data.error || 'Gagal menghapus pendaftaran sidik jari.');
+    }
+  } catch (err) {
+    alert('Koneksi ke server gagal.');
+  }
+}
+
+/* Biometric Register Modal & Scanning Interaction */
+let bioRegAnimFrame = null;
+let bioRegStartTime = 0;
+let bioRegLastVibe = 0;
+const BIO_REG_DURATION = 1500; // 1.5 detik tahan sensor
+
+function openBiometricRegisterModal() {
+  if (!currentUser) return alert('Silakan login terlebih dahulu.');
+  show('biometric-register-modal', true);
+  resetBioRegisterState();
+  initBioRegisterEvents();
+}
+
+function closeBiometricRegisterModal() {
+  cancelBioRegisterScan();
+  show('biometric-register-modal', false);
+}
+
+function resetBioRegisterState() {
+  const pad = $('bio-register-pad');
+  const ring = $('bio-reg-progress-ring');
+  const pct = $('bio-reg-pct');
+  const status = $('bio-reg-status');
+  if (pad) {
+    pad.classList.remove('scanning', 'success');
+  }
+  if (ring) ring.style.strokeDashoffset = '389';
+  if (pct) pct.textContent = '0%';
+  if (status) status.textContent = 'Sentuh & tahan sensor selama 1.5 detik';
+  const devEl = $('bio-detected-device');
+  if (devEl) devEl.textContent = getDeviceDescription();
+}
+
+function initBioRegisterEvents() {
+  const pad = $('bio-register-pad');
+  if (!pad || pad._boundEvents) return;
+  pad._boundEvents = true;
+
+  pad.addEventListener('touchstart', (e) => {
+    if (e.cancelable) e.preventDefault();
+    startBioRegisterScan();
+  }, { passive: false });
+
+  pad.addEventListener('touchend', (e) => {
+    stopBioRegisterScan();
+  }, { passive: true });
+
+  pad.addEventListener('touchcancel', (e) => {
+    stopBioRegisterScan();
+  }, { passive: true });
+
+  pad.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    startBioRegisterScan();
+  });
+
+  pad.addEventListener('mouseup', () => stopBioRegisterScan());
+  pad.addEventListener('mouseleave', () => stopBioRegisterScan());
+}
+
+function startBioRegisterScan() {
+  const pad = $('bio-register-pad');
+  if (!pad || pad.classList.contains('success')) return;
+
+  pad.classList.add('scanning');
+  if (navigator.vibrate) navigator.vibrate(25);
+  $('bio-reg-status').textContent = 'Memindai pola sidik jari... Tahan terus';
+  bioRegStartTime = Date.now();
+  bioRegLastVibe = 0;
+
+  function loop() {
+    const elapsed = Date.now() - bioRegStartTime;
+    const progress = Math.min(1, elapsed / BIO_REG_DURATION);
+    const pVal = Math.round(progress * 100);
+
+    const pct = $('bio-reg-pct');
+    const ring = $('bio-reg-progress-ring');
+    if (pct) pct.textContent = `${pVal}%`;
+    if (ring) ring.style.strokeDashoffset = (389 - (389 * progress)).toFixed(1);
+
+    if (elapsed - bioRegLastVibe >= 320 && progress < 1) {
+      if (navigator.vibrate) navigator.vibrate(20);
+      bioRegLastVibe = elapsed;
+    }
+
+    if (progress < 1) {
+      bioRegAnimFrame = requestAnimationFrame(loop);
+    } else {
+      finishBioRegisterScan();
     }
   }
+  bioRegAnimFrame = requestAnimationFrame(loop);
+}
+
+function stopBioRegisterScan() {
+  cancelBioRegisterScan();
+  const pad = $('bio-register-pad');
+  if (!pad || pad.classList.contains('success')) return;
+
+  pad.classList.remove('scanning');
+  const ring = $('bio-reg-progress-ring');
+  if (ring) ring.style.strokeDashoffset = '389';
+  $('bio-reg-pct').textContent = '0%';
+  $('bio-reg-status').textContent = 'Sentuhan terputus. Harap tahan hingga 100%';
+}
+
+function cancelBioRegisterScan() {
+  if (bioRegAnimFrame) {
+    cancelAnimationFrame(bioRegAnimFrame);
+    bioRegAnimFrame = null;
+  }
+}
+
+async function finishBioRegisterScan() {
+  cancelBioRegisterScan();
+  const pad = $('bio-register-pad');
+  if (!pad) return;
+
+  pad.classList.remove('scanning');
+  pad.classList.add('success');
+  if (navigator.vibrate) navigator.vibrate([50, 40, 90]);
+  $('bio-reg-status').textContent = 'Mendaftarkan ke server...';
+
+  const token = 'BIO-' + currentUser.id + '-' + Math.random().toString(36).substring(2, 9).toUpperCase() + '-' + Date.now();
+  const deviceInfo = getDeviceDescription();
+
+  try {
+    const res = await fetch('/api/biometric/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        karyawan_id: currentUser.id,
+        device_token: token,
+        device_info: deviceInfo
+      })
+    });
+    const data = await res.json();
+    if (data.ok || data.success) {
+      localStorage.setItem('bio_token_' + currentUser.id, token);
+      $('bio-reg-status').textContent = 'Sidik jari berhasil didaftarkan!';
+      setTimeout(() => {
+        closeBiometricRegisterModal();
+        checkBiometricStatus();
+        alertBox('gps-alert', 'success', 'Sensor sidik jari berhasil didaftarkan untuk ' + (currentUser.name || currentUser.nama) + '.');
+      }, 900);
+    } else {
+      $('bio-reg-status').textContent = data.error || 'Gagal mendaftarkan sidik jari.';
+      pad.classList.remove('success');
+    }
+  } catch (err) {
+    $('bio-reg-status').textContent = 'Koneksi ke server gagal.';
+    pad.classList.remove('success');
+  }
+}
+
+/* Biometric Attendance Verification Scanner */
+let bioVerAnimFrame = null;
+let bioVerStartTime = 0;
+let bioVerLastVibe = 0;
+const BIO_VER_DURATION = 1000; // 1.0 detik verifikasi
+
+function setBioVerifyType(type) {
+  activeAttendanceType = type;
+  $('bio-type-masuk').className = type === 'Masuk' ? 'btn btn-primary' : 'btn btn-secondary';
+  $('bio-type-pulang').className = type === 'Pulang' ? 'btn btn-primary' : 'btn btn-secondary';
+}
+
+function openBiometricVerifyModal() {
+  show('biometric-verify-modal', true);
+  setBioVerifyType(activeAttendanceType || 'Masuk');
+  resetBioVerifyState();
+  initBioVerifyEvents();
+}
+
+function closeBiometricVerifyModal() {
+  cancelBioVerifyScan();
+  show('biometric-verify-modal', false);
+}
+
+function resetBioVerifyState() {
+  const pad = $('bio-verify-pad');
+  const ring = $('bio-ver-progress-ring');
+  const pct = $('bio-ver-pct');
+  const status = $('bio-ver-status');
+  if (pad) {
+    pad.classList.remove('scanning', 'success');
+  }
+  if (ring) ring.style.strokeDashoffset = '389';
+  if (pct) pct.textContent = '0%';
+  if (status) status.textContent = 'Sentuh & tahan sensor selama 1 detik';
+}
+
+function initBioVerifyEvents() {
+  const pad = $('bio-verify-pad');
+  if (!pad || pad._boundEvents) return;
+  pad._boundEvents = true;
+
+  pad.addEventListener('touchstart', (e) => {
+    if (e.cancelable) e.preventDefault();
+    startBioVerifyScan();
+  }, { passive: false });
+
+  pad.addEventListener('touchend', (e) => {
+    stopBioVerifyScan();
+  }, { passive: true });
+
+  pad.addEventListener('touchcancel', (e) => {
+    stopBioVerifyScan();
+  }, { passive: true });
+
+  pad.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    startBioVerifyScan();
+  });
+
+  pad.addEventListener('mouseup', () => stopBioVerifyScan());
+  pad.addEventListener('mouseleave', () => stopBioVerifyScan());
+}
+
+function startBioVerifyScan() {
+  const pad = $('bio-verify-pad');
+  if (!pad || pad.classList.contains('success')) return;
+
+  pad.classList.add('scanning');
+  if (navigator.vibrate) navigator.vibrate(25);
+  $('bio-ver-status').textContent = 'Memverifikasi sidik jari... Tahan terus';
+  bioVerStartTime = Date.now();
+  bioVerLastVibe = 0;
+
+  function loop() {
+    const elapsed = Date.now() - bioVerStartTime;
+    const progress = Math.min(1, elapsed / BIO_VER_DURATION);
+    const pVal = Math.round(progress * 100);
+
+    const pct = $('bio-ver-pct');
+    const ring = $('bio-ver-progress-ring');
+    if (pct) pct.textContent = `${pVal}%`;
+    if (ring) ring.style.strokeDashoffset = (389 - (389 * progress)).toFixed(1);
+
+    if (elapsed - bioVerLastVibe >= 280 && progress < 1) {
+      if (navigator.vibrate) navigator.vibrate(20);
+      bioVerLastVibe = elapsed;
+    }
+
+    if (progress < 1) {
+      bioVerAnimFrame = requestAnimationFrame(loop);
+    } else {
+      finishBioVerifyScan();
+    }
+  }
+  bioVerAnimFrame = requestAnimationFrame(loop);
+}
+
+function stopBioVerifyScan() {
+  cancelBioVerifyScan();
+  const pad = $('bio-verify-pad');
+  if (!pad || pad.classList.contains('success')) return;
+
+  pad.classList.remove('scanning');
+  const ring = $('bio-ver-progress-ring');
+  if (ring) ring.style.strokeDashoffset = '389';
+  $('bio-ver-pct').textContent = '0%';
+  $('bio-ver-status').textContent = 'Sentuhan terputus. Harap tahan hingga 100%';
+}
+
+function cancelBioVerifyScan() {
+  if (bioVerAnimFrame) {
+    cancelAnimationFrame(bioVerAnimFrame);
+    bioVerAnimFrame = null;
+  }
+}
+
+async function finishBioVerifyScan() {
+  cancelBioVerifyScan();
+  const pad = $('bio-verify-pad');
+  if (!pad) return;
+
+  pad.classList.remove('scanning');
+  pad.classList.add('success');
+  if (navigator.vibrate) navigator.vibrate([60, 40, 100]);
+  $('bio-ver-status').textContent = 'Sidik jari terverifikasi! Menyimpan presensi...';
+
+  const token = localStorage.getItem('bio_token_' + currentUser.id) || '';
+  try {
+    const res = await fetch('/api/biometric/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        karyawan_id: currentUser.id,
+        device_token: token
+      })
+    });
+    const data = await res.json();
+    if (data.ok && data.verified) {
+      setTimeout(() => {
+        closeBiometricVerifyModal();
+        executeAttendanceSubmit(null, true);
+      }, 700);
+    } else {
+      $('bio-ver-status').textContent = data.error || 'Verifikasi gagal. Pastikan sidik jari cocok.';
+      pad.classList.remove('success');
+    }
+  } catch (err) {
+    $('bio-ver-status').textContent = 'Koneksi ke server gagal.';
+    pad.classList.remove('success');
+  }
+}
+
+/* Trigger Presensi Sidik Jari dari Tombol Utama */
+function triggerFingerprintAttendance(type = 'Masuk') {
+  if (!currentUser) return alert('Silakan login terlebih dahulu.');
+  activeAttendanceType = type;
+
+  if (!isBiometricRegistered) {
+    if (confirm('Sensor sidik jari belum didaftarkan untuk perangkat ini. Apakah Anda ingin mendaftarkannya sekarang?')) {
+      openBiometricRegisterModal();
+    }
+    return;
+  }
+
+  // Jika sudah terdaftar, buka modal pemindai verifikasi sidik jari
+  openBiometricVerifyModal();
 }
 
 /* Leave / Permit Request */

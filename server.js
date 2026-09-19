@@ -70,6 +70,15 @@ db.exec(`
     created_at INTEGER NOT NULL,
     expires_at INTEGER NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS karyawan_biometric (
+    karyawan_id TEXT PRIMARY KEY,
+    device_token TEXT NOT NULL,
+    device_info TEXT,
+    credential_id TEXT,
+    registered_at TEXT NOT NULL,
+    last_used_at TEXT,
+    FOREIGN KEY(karyawan_id) REFERENCES karyawan(id)
+  );
 `);
 
 // Migrasi Kolom Dinamis jika tabel sudah ada sebelumnya
@@ -746,6 +755,77 @@ app.post("/api/admin/approval", (req, res) => {
     });
 
     res.json({ ok: true, success: true, message: `Permohonan berhasil ${action === "approve" ? "disetujui" : "ditolak"}.`, status: newStatus });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// 8c. BIOMETRIC REGISTRATION & VERIFICATION
+app.post("/api/biometric/register", (req, res) => {
+  try {
+    const { karyawan_id, device_token, device_info, credential_id } = req.body || {};
+    if (!karyawan_id || !device_token) {
+      return res.status(400).json({ ok: false, error: "ID Karyawan dan token biometrik wajib disertakan." });
+    }
+    const user = db.prepare("SELECT id, nama FROM karyawan WHERE id = ?").get(karyawan_id);
+    if (!user) {
+      return res.status(404).json({ ok: false, error: "Karyawan tidak ditemukan." });
+    }
+    const nowStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    db.prepare(`
+      INSERT INTO karyawan_biometric (karyawan_id, device_token, device_info, credential_id, registered_at, last_used_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(karyawan_id) DO UPDATE SET
+        device_token = excluded.device_token,
+        device_info = excluded.device_info,
+        credential_id = excluded.credential_id,
+        registered_at = excluded.registered_at,
+        last_used_at = excluded.last_used_at
+    `).run(karyawan_id, device_token, device_info || "Perangkat Terverifikasi", credential_id || "", nowStr, nowStr);
+
+    res.json({ ok: true, success: true, message: `Sidik jari berhasil didaftarkan untuk ${user.nama}.` });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.get("/api/biometric/status/:id", (req, res) => {
+  try {
+    const row = db.prepare("SELECT karyawan_id, device_info, registered_at, last_used_at FROM karyawan_biometric WHERE karyawan_id = ?").get(req.params.id);
+    if (!row) {
+      return res.json({ ok: true, registered: false });
+    }
+    res.json({ ok: true, registered: true, data: row });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.post("/api/biometric/unregister", (req, res) => {
+  try {
+    const { karyawan_id } = req.body || {};
+    if (!karyawan_id) return res.status(400).json({ ok: false, error: "ID Karyawan wajib disertakan." });
+    db.prepare("DELETE FROM karyawan_biometric WHERE karyawan_id = ?").run(karyawan_id);
+    res.json({ ok: true, success: true, message: "Pendaftaran sidik jari berhasil dihapus." });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.post("/api/biometric/verify", (req, res) => {
+  try {
+    const { karyawan_id, device_token } = req.body || {};
+    if (!karyawan_id) return res.status(400).json({ ok: false, error: "ID Karyawan wajib disertakan." });
+    const row = db.prepare("SELECT * FROM karyawan_biometric WHERE karyawan_id = ?").get(karyawan_id);
+    if (!row) {
+      return res.status(404).json({ ok: false, verified: false, error: "Sidik jari belum didaftarkan untuk akun ini." });
+    }
+    if (device_token && row.device_token && row.device_token !== device_token) {
+      return res.status(403).json({ ok: false, verified: false, error: "Perangkat tidak cocok dengan sidik jari yang terdaftar." });
+    }
+    const nowStr = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    db.prepare("UPDATE karyawan_biometric SET last_used_at = ? WHERE karyawan_id = ?").run(nowStr, karyawan_id);
+    res.json({ ok: true, success: true, verified: true });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
   }
