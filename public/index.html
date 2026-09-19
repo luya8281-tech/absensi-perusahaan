@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>SPPG Onyam &middot; Portal Presensi Modern</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0a0e17" id="meta-theme-color">
+<meta name="theme-color" content="#06080d" id="meta-theme-color">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
@@ -22,62 +22,46 @@
 <style>
 :root {
   --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-  --bg-dark: #07090e;
-  --bg-card-dark: rgba(22, 28, 45, 0.65);
-  --border-dark: rgba(255, 255, 255, 0.14);
-  --text-dark: #f8fafc;
-  --text-muted-dark: #94a3b8;
-  --input-bg-dark: rgba(15, 23, 42, 0.6);
-  --glass-specular-dark: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 100%);
-  --nav-bg-dark: rgba(13, 18, 30, 0.78);
-  --modal-bg-dark: rgba(15, 23, 42, 0.85);
-
-  --bg-light: #f1f5f9;
-  --bg-card-light: rgba(255, 255, 255, 0.75);
-  --border-light: rgba(0, 0, 0, 0.08);
-  --text-light: #0f172a;
-  --text-muted-light: #64748b;
-  --input-bg-light: rgba(255, 255, 255, 0.9);
-  --glass-specular-light: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
-  --nav-bg-light: rgba(255, 255, 255, 0.82);
-  --modal-bg-light: rgba(255, 255, 255, 0.92);
-
   --primary: #3b82f6;
   --primary-glow: rgba(59, 130, 246, 0.35);
   --success: #10b981;
   --success-glow: rgba(16, 185, 129, 0.3);
   --warn: #f59e0b;
   --danger: #ef4444;
-  --radius-xl: 26px;
+  --radius-xl: 28px;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
-}
 
-[data-theme="dark"] {
-  --bg: var(--bg-dark);
-  --bg-card: var(--bg-card-dark);
-  --border: var(--border-dark);
-  --border-specular: var(--glass-specular-dark);
-  --text: var(--text-dark);
-  --text-muted: var(--text-muted-dark);
-  --input-bg: var(--input-bg-dark);
-  --nav-bg: var(--nav-bg-dark);
-  --modal-bg: var(--modal-bg-dark);
-  --weather-grad: linear-gradient(135deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.65) 100%);
+  /* iPhone Fluid Glass - Dark (Default) */
+  --bg: #06080d;
+  --glass-card: rgba(255, 255, 255, 0.05);
+  --glass-card-nested: rgba(255, 255, 255, 0.04);
+  --glass-blur: blur(36px) saturate(220%) brightness(1.05);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.16);
+  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --nav-bg: rgba(12, 16, 26, 0.72);
+  --modal-bg: rgba(15, 23, 42, 0.85);
+  --weather-card-bg: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(15, 23, 42, 0.45) 100%);
 }
 
 [data-theme="light"] {
-  --bg: var(--bg-light);
-  --bg-card: var(--bg-card-light);
-  --border: var(--border-light);
-  --border-specular: var(--glass-specular-light);
-  --text: var(--text-light);
-  --text-muted: var(--text-muted-light);
-  --input-bg: var(--input-bg-light);
-  --nav-bg: var(--nav-bg-light);
-  --modal-bg: var(--modal-bg-light);
-  --weather-grad: linear-gradient(135deg, rgba(219, 234, 254, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%);
+  /* iPhone Fluid Glass - Light */
+  --bg: #f8fafc;
+  --glass-card: rgba(255, 255, 255, 0.55);
+  --glass-card-nested: rgba(255, 255, 255, 0.45);
+  --glass-blur: blur(36px) saturate(200%) brightness(1.02);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 16px 40px -10px rgba(100, 116, 139, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --input-bg: rgba(255, 255, 255, 0.75);
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --modal-bg: rgba(255, 255, 255, 0.94);
+  --weather-card-bg: linear-gradient(135deg, rgba(219, 234, 254, 0.75) 0%, rgba(255, 255, 255, 0.75) 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font); -webkit-tap-highlight-color: transparent; }
@@ -91,40 +75,35 @@ body {
   position: relative;
 }
 
-/* Fluid iPhone Ambient Lighting Orbs */
+/* Ambient Fluid Glow Background */
 .ambient-glow-1 {
-  position: fixed; top: -120px; left: -80px; width: 340px; height: 340px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.28) 0%, rgba(139, 92, 246, 0.15) 50%, transparent 70%);
-  border-radius: 50%; filter: blur(50px); pointer-events: none; z-index: -1; animation: floatSlow 18s ease-in-out infinite alternate;
+  position: fixed; top: -140px; left: -100px; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.32) 0%, rgba(139, 92, 246, 0.16) 50%, transparent 70%);
+  border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: -1;
+  animation: floatSlow1 20s ease-in-out infinite alternate;
 }
 .ambient-glow-2 {
-  position: fixed; top: 35%; right: -120px; width: 380px; height: 380px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.12) 50%, transparent 70%);
-  border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: -1; animation: floatSlow 24s ease-in-out infinite alternate-reverse;
-}
-.ambient-glow-3 {
-  position: fixed; bottom: -80px; left: 20%; width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(99, 102, 241, 0.12) 50%, transparent 70%);
+  position: fixed; top: 35%; right: -120px; width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(59, 130, 246, 0.14) 50%, transparent 70%);
   border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: -1;
+  animation: floatSlow2 24s ease-in-out infinite alternate-reverse;
 }
-@keyframes floatSlow {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, 40px) scale(1.08); }
-}
+@keyframes floatSlow1 { 0% { transform: translate(0, 0); } 100% { transform: translate(40px, 50px) scale(1.1); } }
+@keyframes floatSlow2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-40px, -40px) scale(1.08); } }
 
 .container { max-width: 460px; margin: 0 auto; padding: 14px 16px; }
 .hidden { display: none !important; }
 
-/* iPhone Fluid Frosted Glass Card */
+/* iPhone Fluid Glass Component */
 .fluid-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid var(--border);
+  background: var(--glass-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 18px;
   margin-bottom: 14px;
-  box-shadow: 0 12px 35px -8px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(--glass-shadow);
   position: relative;
   overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
@@ -134,18 +113,18 @@ body {
 .top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 4px 2px; }
 .header-left { display: flex; align-items: center; gap: 10px; }
 .btn-icon {
-  width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);
-  background: var(--bg-card); color: var(--text); display: flex; align-items: center;
+  width: 40px; height: 40px; border-radius: 12px; border: var(--glass-border);
+  background: var(--glass-card); color: var(--text); display: flex; align-items: center;
   justify-content: center; cursor: pointer; transition: all 0.2s ease;
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
 }
 .btn-icon:active { transform: scale(0.92); }
 .btn-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; }
 
 .brand-capsule {
   display: flex; align-items: center; gap: 8px; padding: 6px 14px;
-  border-radius: 24px; background: var(--bg-card); border: 1px solid var(--border);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1); backdrop-filter: blur(20px);
+  border-radius: 24px; background: var(--glass-card); border: var(--glass-border);
+  box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur);
 }
 .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulseDot 2s infinite; }
 .brand-capsule h1 { font-size: 13.5px; font-weight: 800; letter-spacing: -0.02em; }
@@ -155,26 +134,24 @@ body {
 
 /* iOS Weather Widget */
 .weather-card {
-  background: var(--weather-grad);
-  border: 1px solid var(--border);
+  background: var(--weather-card-bg);
+  border: var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 16px 18px;
   margin-bottom: 14px;
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
 }
 .weather-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.weather-loc { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+.weather-loc { font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 5px; color: var(--text); }
 .weather-temp { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 4px 0 2px; }
 .weather-cond { font-size: 12.5px; font-weight: 600; color: var(--primary); }
-.weather-icon-wrap { font-size: 38px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
+.weather-icon-svg { width: 38px; height: 38px; stroke: var(--primary); fill: none; stroke-width: 2; }
 .weather-footer {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+  margin-top: 12px; padding-top: 10px; border-top: var(--glass-border);
   font-size: 11.5px; color: var(--text-muted);
 }
 .weather-pill { padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
@@ -190,19 +167,19 @@ body {
 }
 
 /* Interactive Radar Map */
-#map-container { height: 180px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); position: relative; z-index: 1; }
+#map-container { height: 180px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 12px; border: var(--glass-border); position: relative; z-index: 1; }
 .distance-capsule {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;
-  border: 1px solid var(--border); backdrop-filter: blur(12px);
+  border: var(--glass-border); backdrop-filter: blur(12px);
 }
 .distance-capsule.ok { background: rgba(16, 185, 129, 0.14); border-color: rgba(16, 185, 129, 0.3); color: #10b981; }
 .distance-capsule.bad { background: rgba(239, 68, 68, 0.14); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
 
-/* Buttons & iOS Segmented Tactile */
-.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+/* Action Buttons */
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .btn-action {
-  padding: 16px 12px; border: none; border-radius: var(--radius-lg);
+  padding: 15px 12px; border: none; border-radius: var(--radius-lg);
   font-size: 13.5px; font-weight: 700; cursor: pointer;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.16s ease;
@@ -220,25 +197,45 @@ body {
 }
 .btn:active { transform: scale(0.96); }
 .btn-primary { background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff; box-shadow: 0 4px 18px var(--primary-glow); }
-.btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); backdrop-filter: blur(12px); }
+.btn-secondary { background: var(--glass-card-nested); color: var(--text); border: var(--glass-border); backdrop-filter: blur(12px); }
 
 /* Form Controls */
 .input-group { margin-bottom: 12px; text-align: left; }
 .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
 input[type=text], input[type=password], input[type=date], select, textarea {
-  width: 100%; padding: 12px 14px; background: var(--input-bg); border: 1px solid var(--border);
+  width: 100%; padding: 12px 14px; background: var(--input-bg); border: var(--glass-border);
   border-radius: var(--radius-md); color: var(--text); font-size: 13.5px; outline: none; transition: border-color 0.2s;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
 
-/* iOS Bottom Tab Bar */
+/* Swipeable Tab Container */
+#swipe-viewport {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+}
+#tabs-slider {
+  display: flex;
+  width: 300%;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+.tab-pane {
+  width: 33.333333%;
+  min-width: 33.333333%;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+
+/* iOS Bottom Navigation Bar */
 .bottom-nav {
   position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
   width: calc(100% - 28px); max-width: 430px;
   background: var(--nav-bg);
-  backdrop-filter: blur(30px) saturate(210%);
-  -webkit-backdrop-filter: blur(30px) saturate(210%);
-  border: 1px solid var(--border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: 32px;
   display: flex; justify-content: space-around;
   padding: 8px 6px; z-index: 990;
@@ -262,7 +259,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .badge-ditolak { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 .badge-belum { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
 
-/* Sidebar Drawer (iOS Slide-Over Sheet) */
+/* Sidebar Drawer (iOS Slide-Over) */
 .drawer-backdrop {
   position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -275,7 +272,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
   background: var(--modal-bg);
   backdrop-filter: blur(35px) saturate(200%);
   -webkit-backdrop-filter: blur(35px) saturate(200%);
-  border-right: 1px solid var(--border);
+  border-right: var(--glass-border);
   z-index: 1001; padding: 22px 18px; display: flex; flex-direction: column;
   transform: translateX(-100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -302,14 +299,14 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 /* Modals */
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1010; padding: 16px; }
 .modal-content {
-  background: var(--modal-bg); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  background: var(--modal-bg); border: var(--glass-border); border-radius: var(--radius-xl);
   width: 100%; max-width: 420px; padding: 20px; text-align: center;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  max-height: 90vh; overflow-y: auto; backdrop-filter: blur(30px);
+  max-height: 90vh; overflow-y: auto; backdrop-filter: var(--glass-blur);
 }
 
 /* Biometric Camera Box */
-.camera-box { position: relative; width: 100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; background: #000; margin-bottom: 12px; border: 2px solid var(--border); }
+.camera-box { position: relative; width: 100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; background: #000; margin-bottom: 12px; border: 2px solid var(--glass-border); }
 #camera-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 .face-guide {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -320,14 +317,24 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .liveness-badge { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 14px; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); white-space: nowrap; }
 
 /* Logs & Admin Table */
-.log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--radius-md); background: var(--input-bg); border: 1px solid var(--border); margin-bottom: 8px; }
+.log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--radius-md); background: var(--glass-card-nested); border: var(--glass-border); margin-bottom: 8px; }
 .log-left { display: flex; align-items: center; gap: 10px; }
-.log-avatar { width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 1px solid var(--border); overflow: hidden; }
+.log-avatar { width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: var(--glass-border); overflow: hidden; }
 .log-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 10px; }
+.table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: var(--glass-border); margin-top: 10px; }
 table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; }
-th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
+th, td { padding: 9px 10px; border-bottom: var(--glass-border); }
 th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10px; }
+
+/* Approval Cards */
+.approval-card {
+  padding: 12px 14px; border-radius: var(--radius-md); background: var(--glass-card-nested);
+  border: var(--glass-border); margin-bottom: 8px; text-align: left;
+}
+.approval-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.approval-actions { display: flex; gap: 6px; margin-top: 10px; }
+.btn-approve { padding: 6px 12px; font-size: 11.5px; font-weight: 700; border-radius: var(--radius-sm); border: none; background: var(--success); color: #fff; cursor: pointer; }
+.btn-reject { padding: 6px 12px; font-size: 11.5px; font-weight: 700; border-radius: var(--radius-sm); border: none; background: var(--danger); color: #fff; cursor: pointer; }
 
 /* Alerts */
 .alert { padding: 11px 13px; border-radius: var(--radius-md); font-size: 12px; line-height: 1.4; margin-bottom: 12px; text-align: left; }
@@ -341,7 +348,6 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <!-- Ambient Fluid Glow Background -->
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
-<div class="ambient-glow-3"></div>
 
 <div class="container">
 
@@ -354,7 +360,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
       <div class="brand-capsule">
         <span class="brand-dot"></span>
         <h1>SPPG Onyam</h1>
-        <span>&middot; Gunung Keler</span>
+        <span>&middot; Presensi Modern</span>
       </div>
     </div>
     <div style="display:flex;gap:6px;">
@@ -369,7 +375,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
   </header>
 
   <!-- WIDGET CUACA IPHONE FLUID GLASS (HARI INI & BESOK) -->
-  <div class="weather-card" onclick="fetchLiveWeather()" title="Ketuk untuk memperbarui cuaca">
+  <div class="weather-card" onclick="fetchLiveWeather()" title="Perbarui Cuaca">
     <div class="weather-top">
       <div>
         <div class="weather-loc">
@@ -379,17 +385,19 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
         <div class="weather-temp" id="wt-suhu">25&deg;</div>
         <div class="weather-cond" id="wt-kondisi">Cerah Berawan</div>
       </div>
-      <div class="weather-icon-wrap" id="wt-icon">⛅</div>
+      <div id="wt-icon-container">
+        <svg class="weather-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </div>
     </div>
     <div class="weather-footer">
-      <div>💧 Lembab: <strong id="wt-lembab">97%</strong> &middot; 💨 Angin: <strong id="wt-angin">6 km/h</strong></div>
-      <div class="weather-pill" id="wt-besok">Besok: 24&deg; - 32&deg; (Hujan)</div>
+      <div>Kelembaban: <strong id="wt-lembab">97%</strong> &middot; Angin: <strong id="wt-angin">6 km/h</strong></div>
+      <div class="weather-pill" id="wt-besok">Besok: 24&deg; - 32&deg; (Hujan Ringan)</div>
     </div>
   </div>
 
   <!-- NOTIFIKASI PROTOKOL HTTP -->
   <div id="http-notice" class="alert alert-warn hidden">
-    💡 <strong>Akses GPS Sensor:</strong> Jika browser HP Anda membatasi sensor GPS di HTTP biasa, beralihlah ke <a id="https-link" href="#" style="color:var(--primary);font-weight:700;text-decoration:underline;">HTTPS Port 3006 (Klik di Sini)</a>.
+    Sensor GPS dibatasi pada koneksi HTTP biasa. Silakan beralih ke <a id="https-link" href="#" style="color:var(--primary);font-weight:700;text-decoration:underline;">HTTPS Port 3006</a> untuk akses GPS optimal.
   </div>
 
   <!-- VIEW: LOGIN -->
@@ -410,178 +418,199 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
     <button id="btn-login" class="btn btn-primary" style="margin-top:6px;" onclick="doLogin()">Masuk ke Sistem</button>
   </section>
 
-  <!-- VIEW: DASHBOARD -->
+  <!-- VIEW: MAIN (SWIPEABLE TABS VIEWPORT) -->
   <main id="view-main" class="hidden">
+    <div id="swipe-viewport">
+      <div id="tabs-slider">
 
-    <!-- TAB 1: PRESENSI -->
-    <div id="tab-presensi">
-      <!-- Live Clock Display -->
-      <div class="fluid-card clock-card">
-        <div class="clock-time" id="live-clock">00:00:00</div>
-        <div class="clock-date" id="live-date">Memuat tanggal...</div>
-        <div class="shift-pill" id="shift-status">Batas Masuk: 08:15 WIB</div>
-      </div>
-
-      <!-- Pengaturan Titik & Shift Presensi -->
-      <div class="fluid-card" style="padding:14px 16px;">
-        <div class="input-group" style="margin-bottom:8px;">
-          <label>CABANG OPERASIONAL GEOFENCE</label>
-          <select id="branch-select" onchange="onBranchChange()">
-            <option value="CAB-01">Kantor Utama Cipaeh (Radius 50m)</option>
-          </select>
-        </div>
-        <div class="input-group" style="margin-bottom:0;">
-          <label>SHIFT KERJA</label>
-          <select id="shift-select" onchange="onShiftChange()">
-            <option value="pagi">Shift Pagi (08:00 - 16:00, Toleransi 08:15)</option>
-            <option value="siang">Shift Siang (13:00 - 21:00, Toleransi 13:15)</option>
-            <option value="malam">Shift Malam (21:00 - 05:00, Toleransi 21:15)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Interactive Radar Map & Distance -->
-      <div class="fluid-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <h3 style="font-size:13.5px;font-weight:700;">Radar Geofencing Kantor</h3>
-          <button type="button" onclick="refreshGPS()" style="background:none;border:none;color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">🔄 Perbarui GPS</button>
-        </div>
-        
-        <div id="map-container"></div>
-
-        <div id="distance-box" class="distance-capsule ok">
-          <span id="dist-text">Mendeteksi koordinat GPS...</span>
-          <strong id="dist-val">-- m</strong>
-        </div>
-
-        <div id="gps-alert"></div>
-
-        <!-- Tombol Presensi -->
-        <div id="emp-actions" class="action-grid">
-          <button class="btn-action btn-masuk" onclick="triggerAttendance('Masuk')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Absen Masuk
-          </button>
-          <button class="btn-action btn-pulang" onclick="triggerAttendance('Pulang')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Absen Pulang
-          </button>
-        </div>
-
-        <div style="display:flex;gap:8px;margin-top:6px;">
-          <button class="btn btn-secondary" onclick="toggleLeaveModal(true)" style="flex:1;font-size:12px;padding:10px;">
-            📋 Form Izin / Cuti
-          </button>
-          <button class="btn btn-secondary" onclick="openKiosScanModal()" style="flex:1;font-size:12px;padding:10px;">
-            ⚡ Absen QR / Teks
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: RIWAYAT / REKAP -->
-    <div id="tab-riwayat" class="hidden">
-      <div id="admin-view-panel" class="hidden">
-        <div class="fluid-card">
-          <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Statistik Kehadiran Hari Ini</h3>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
-            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-hadir" style="font-size:22px;font-weight:800;color:var(--success);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">HADIR</div></div>
-            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-telat" style="font-size:22px;font-weight:800;color:var(--warn);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">TERLAMBAT</div></div>
-            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-izin" style="font-size:22px;font-weight:800;color:var(--primary);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">IZIN / SAKIT</div></div>
-            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-belum" style="font-size:22px;font-weight:800;color:var(--danger);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">BELUM ABSEN</div></div>
+        <!-- TAB 0: PRESENSI -->
+        <div id="tab-presensi" class="tab-pane">
+          <!-- Live Clock Display -->
+          <div class="fluid-card clock-card">
+            <div class="clock-time" id="live-clock">00:00:00</div>
+            <div class="clock-date" id="live-date">Memuat tanggal...</div>
+            <div class="shift-pill" id="shift-status">Batas Masuk: 08:15 WIB</div>
           </div>
-          <div style="display:flex;gap:8px;">
-            <button onclick="openKiosHostModal()" class="btn btn-primary" style="flex:1;font-size:12px;padding:10px;">🖥️ Buka Mode Kios QR</button>
-            <button onclick="sendWaReportNow()" class="btn btn-secondary" style="flex:1;font-size:12px;padding:10px;">📲 Kirim Rekap WA</button>
-          </div>
-        </div>
 
-        <div class="fluid-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <h3 style="font-size:15px;font-weight:700;">Daftar Rekap Absensi</h3>
-            <div style="display:flex;gap:6px;">
-              <button onclick="exportCSV()" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;width:auto;">📥 CSV</button>
-              <button onclick="window.print()" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;width:auto;">🖨️ Cetak</button>
+          <!-- Pengaturan Titik & Shift Presensi -->
+          <div class="fluid-card" style="padding:14px 16px;">
+            <div class="input-group" style="margin-bottom:8px;">
+              <label>CABANG OPERASIONAL GEOFENCE</label>
+              <select id="branch-select" onchange="onBranchChange()">
+                <option value="CAB-01">Kantor Utama Cipaeh (Radius 50m)</option>
+              </select>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>SHIFT KERJA</label>
+              <select id="shift-select" onchange="onShiftChange()">
+                <option value="pagi">Shift Pagi (08:00 - 16:00, Toleransi 08:15)</option>
+                <option value="siang">Shift Siang (13:00 - 21:00, Toleransi 13:15)</option>
+                <option value="malam">Shift Malam (21:00 - 05:00, Toleransi 21:15)</option>
+              </select>
             </div>
           </div>
 
-          <div style="display:flex;gap:8px;margin-bottom:10px;">
-            <input type="text" id="search-emp" placeholder="Cari Nama / ID..." oninput="filterAdminTable()" style="font-size:12px;padding:8px 10px;">
-            <input type="date" id="filter-date" onchange="loadAdminData()" style="font-size:12px;padding:8px 10px;max-width:140px;">
-          </div>
+          <!-- Interactive Radar Map & Distance -->
+          <div class="fluid-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <h3 style="font-size:13.5px;font-weight:700;">Radar Geofencing Kantor</h3>
+              <button type="button" onclick="refreshGPS()" style="background:none;border:none;color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">Perbarui GPS</button>
+            </div>
+            
+            <div id="map-container"></div>
 
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nama</th>
-                  <th>Status</th>
-                  <th>Waktu</th>
-                  <th>Cabang</th>
-                  <th>Foto</th>
-                </tr>
-              </thead>
-              <tbody id="admin-table-body">
-                <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
-              </tbody>
-            </table>
+            <div id="distance-box" class="distance-capsule ok">
+              <span id="dist-text">Mendeteksi koordinat GPS...</span>
+              <strong id="dist-val">-- m</strong>
+            </div>
+
+            <div id="gps-alert"></div>
+
+            <!-- Tombol Presensi -->
+            <div id="emp-actions" class="action-grid">
+              <button class="btn-action btn-masuk" onclick="triggerAttendance('Masuk')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Absen Masuk
+              </button>
+              <button class="btn-action btn-pulang" onclick="triggerAttendance('Pulang')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Absen Pulang
+              </button>
+            </div>
+
+            <!-- Tombol Verifikasi Sidik Jari (WebAuthn Native Fingerprint) -->
+            <button class="btn btn-primary" onclick="triggerFingerprintAttendance()" style="margin-bottom:8px;background:linear-gradient(135deg,#1d4ed8,#2563eb);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
+              Verifikasi Sidik Jari (Biometrik)
+            </button>
+
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-secondary" onclick="toggleLeaveModal(true)" style="flex:1;font-size:12px;padding:10px;">
+                Pengajuan Izin / Cuti
+              </button>
+              <button class="btn btn-secondary" onclick="openKiosScanModal()" style="flex:1;font-size:12px;padding:10px;">
+                Absen QR / Teks
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div id="emp-view-panel">
-        <div class="fluid-card">
-          <h3 style="font-size:15px;font-weight:700;margin-bottom:14px;">Riwayat Kehadiran Anda</h3>
-          <div id="riwayat-list-container">
-            <p style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px 0;">Memuat riwayat...</p>
+        <!-- TAB 1: RIWAYAT / REKAP & PERSETUJUAN ADMIN -->
+        <div id="tab-riwayat" class="tab-pane">
+          <div id="admin-view-panel" class="hidden">
+            <!-- Persetujuan Izin / Cuti (Admin Approval Section) -->
+            <div class="fluid-card" id="approval-section">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h3 style="font-size:15px;font-weight:700;">Persetujuan Izin & Cuti</h3>
+                <span id="approval-count" class="badge badge-warn">0 Menunggu</span>
+              </div>
+              <div id="pending-approval-list">
+                <p style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">Tidak ada permohonan yang menunggu persetujuan.</p>
+              </div>
+            </div>
+
+            <div class="fluid-card">
+              <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Statistik Kehadiran Hari Ini</h3>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+                <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-hadir" style="font-size:22px;font-weight:800;color:var(--success);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">HADIR</div></div>
+                <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-telat" style="font-size:22px;font-weight:800;color:var(--warn);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">TERLAMBAT</div></div>
+                <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-izin" style="font-size:22px;font-weight:800;color:var(--primary);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">IZIN / SAKIT</div></div>
+                <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-belum" style="font-size:22px;font-weight:800;color:var(--danger);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">BELUM ABSEN</div></div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="openKiosHostModal()" class="btn btn-primary" style="flex:1;font-size:12px;padding:10px;">Buka Mode Kios QR</button>
+                <button onclick="sendWaReportNow()" class="btn btn-secondary" style="flex:1;font-size:12px;padding:10px;">Kirim Rekap WA</button>
+              </div>
+            </div>
+
+            <div class="fluid-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h3 style="font-size:15px;font-weight:700;">Daftar Rekap Absensi</h3>
+                <div style="display:flex;gap:6px;">
+                  <button onclick="exportCSV()" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;width:auto;">Unduh CSV</button>
+                  <button onclick="window.print()" class="btn btn-secondary" style="padding:6px 10px;font-size:11px;width:auto;">Cetak</button>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-bottom:10px;">
+                <input type="text" id="search-emp" placeholder="Cari Nama / ID..." oninput="filterAdminTable()" style="font-size:12px;padding:8px 10px;">
+                <input type="date" id="filter-date" onchange="loadAdminData()" style="font-size:12px;padding:8px 10px;max-width:140px;">
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nama</th>
+                      <th>Status</th>
+                      <th>Waktu</th>
+                      <th>Cabang</th>
+                      <th>Foto</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-table-body">
+                    <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="emp-view-panel">
+            <div class="fluid-card">
+              <h3 style="font-size:15px;font-weight:700;margin-bottom:14px;">Riwayat Kehadiran Anda</h3>
+              <div id="riwayat-list-container">
+                <p style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px 0;">Memuat riwayat...</p>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- TAB 2: PROFIL -->
+        <div id="tab-profil" class="tab-pane">
+          <div class="fluid-card" style="text-align:center;padding:24px 16px;">
+            <div id="user-avatar" style="width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;font-weight:800;color:#fff;box-shadow:0 6px 20px rgba(37,99,235,0.4);">U</div>
+            <h2 id="profile-name" style="font-size:18px;font-weight:800;">Nama Karyawan</h2>
+            <p id="profile-id" style="font-size:13px;color:var(--text-muted);margin-top:2px;">EMP-000 &middot; Karyawan</p>
+            <div id="profile-device-id" style="font-size:11px;color:var(--text-muted);margin-top:6px;font-family:monospace;">DEV-UNKNOWN</div>
+          </div>
+
+          <div class="fluid-card">
+            <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">Ganti Password Akun</h3>
+            <div id="pass-alert"></div>
+            <div class="input-group">
+              <label>PASSWORD LAMA</label>
+              <input type="password" id="pass-old" placeholder="Masukkan password lama">
+            </div>
+            <div class="input-group">
+              <label>PASSWORD BARU</label>
+              <input type="password" id="pass-new" placeholder="Minimal 4 karakter">
+            </div>
+            <button class="btn btn-primary" onclick="doChangePassword()">Simpan Password Baru</button>
+          </div>
+
+          <div class="fluid-card" style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-secondary" onclick="installPWA()" id="btn-install-pwa" style="justify-content:center;">Pasang Aplikasi di Layar HP</button>
+            <button class="btn btn-secondary" style="color:#ef4444;border-color:rgba(239,68,68,0.2);" onclick="doLogout()">Keluar dari Akun</button>
+          </div>
+        </div>
+
       </div>
     </div>
-
-    <!-- TAB 3: PROFIL -->
-    <div id="tab-profil" class="hidden">
-      <div class="fluid-card" style="text-align:center;padding:24px 16px;">
-        <div id="user-avatar" style="width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;font-weight:800;color:#fff;box-shadow:0 6px 20px rgba(37,99,235,0.4);">U</div>
-        <h2 id="profile-name" style="font-size:18px;font-weight:800;">Nama Karyawan</h2>
-        <p id="profile-id" style="font-size:13px;color:var(--text-muted);margin-top:2px;">EMP-000 &middot; Karyawan</p>
-        <div id="profile-device-id" style="font-size:11px;color:var(--text-muted);margin-top:6px;font-family:monospace;">DEV-UNKNOWN</div>
-      </div>
-
-      <div class="fluid-card">
-        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">Ganti Password Akun</h3>
-        <div id="pass-alert"></div>
-        <div class="input-group">
-          <label>PASSWORD LAMA</label>
-          <input type="password" id="pass-old" placeholder="Masukkan password lama">
-        </div>
-        <div class="input-group">
-          <label>PASSWORD BARU</label>
-          <input type="password" id="pass-new" placeholder="Minimal 4 karakter">
-        </div>
-        <button class="btn btn-primary" onclick="doChangePassword()">Simpan Password Baru</button>
-      </div>
-
-      <div class="fluid-card" style="display:flex;flex-direction:column;gap:8px;">
-        <button class="btn btn-secondary" onclick="installPWA()" id="btn-install-pwa" style="justify-content:center;">📲 Pasang Aplikasi di Layar HP</button>
-        <button class="btn btn-secondary" style="color:#ef4444;border-color:rgba(239,68,68,0.2);" onclick="doLogout()">🚪 Keluar dari Akun</button>
-      </div>
-    </div>
-
   </main>
 
-  <!-- BOTTOM FLOATING NAVIGATION BAR -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <nav id="bottom-nav" class="bottom-nav hidden">
-    <div class="nav-item active" onclick="switchTab('presensi')">
+    <div class="nav-item active" onclick="goToTab(0)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       <span>Presensi</span>
     </div>
-    <div class="nav-item" onclick="switchTab('riwayat')">
+    <div class="nav-item" onclick="goToTab(1)">
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span id="nav-label-rekap">Riwayat</span>
     </div>
-    <div class="nav-item" onclick="switchTab('profil')">
+    <div class="nav-item" onclick="goToTab(2)">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>Profil</span>
     </div>
@@ -611,7 +640,11 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
       </li>
       <li class="drawer-item" onclick="toggleSidebar(false); openKiosScanModal()">
         <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Presensi Cepat via Teks/QR</span>
+        <span>Presensi Cepat via Teks / QR</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); triggerFingerprintAttendance()">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-6.88 17.23"/><path d="M12 6a6 6 0 0 0-4.13 10.34"/><path d="M12 10a2 2 0 0 0-1.38 3.45"/><path d="M12 14v4"/><path d="M16 12a4 4 0 0 1-4 4"/><path d="M20 12a8 8 0 0 0-8-8"/></svg>
+        <span>Verifikasi Sidik Jari</span>
       </li>
       <li class="drawer-item" onclick="toggleSidebar(false); toggleLeaveModal(true)">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -645,7 +678,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span>Panduan Presensi & FAQ</span>
       </li>
-      <li class="drawer-item" onclick="window.open('https://wa.me/6285213165698?text=Halo%20Admin%20SPPG%2C%20saya%20butuh%20bantuan%20terkait%20presensi', '_blank')">
+      <li class="drawer-item" onclick="window.open('https://wa.me/6285213165698?text=Halo%20Admin%20SPPG%2C%20saya%20butuh%20bantuan%20presensi', '_blank')">
         <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         <span>Hubungi WhatsApp Admin</span>
       </li>
@@ -665,7 +698,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <div id="camera-modal" class="modal-backdrop hidden">
   <div class="modal-content">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Verifikasi Swafoto</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Posisikan wajah Anda tepat di dalam oval</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Posisikan wajah Anda tepat di dalam bingkai oval</p>
     <div class="camera-box">
       <video id="camera-preview" autoplay playsinline></video>
       <div class="face-guide"></div>
@@ -673,7 +706,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
     </div>
     <canvas id="camera-canvas" class="hidden"></canvas>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn btn-primary" onclick="captureAndSubmitAttendance()">📸 Ambil Foto & Absen</button>
+      <button class="btn btn-primary" onclick="captureAndSubmitAttendance()">Ambil Foto & Absen</button>
       <button class="btn btn-secondary" onclick="skipSelfieAndSubmit()">Lanjut Tanpa Foto</button>
       <button class="btn" style="background:transparent;color:var(--text-muted);font-size:12px;" onclick="closeCameraModal()">Batal</button>
     </div>
@@ -697,7 +730,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
       <textarea id="leave-note" rows="3" placeholder="Tuliskan keterangan detail..."></textarea>
     </div>
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <button class="btn btn-primary" onclick="submitLeave()">Kirim Pengajuan</button>
+      <button class="btn btn-primary" onclick="submitLeave()">Kirim Permohonan</button>
       <button class="btn btn-secondary" onclick="toggleLeaveModal(false)">Batal</button>
     </div>
   </div>
@@ -707,32 +740,29 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <div id="kios-host-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="max-width:380px;">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Kios QR & Teks Kantor</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Scan QR atau ketik Token Teks di ponsel karyawan</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Pindai QR atau masukkan kode token teks pada ponsel</p>
     <div style="background:#fff;padding:12px;border-radius:18px;display:inline-block;margin:0 auto 10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
       <img id="kios-qr-img" src="" alt="QR Code Kios" style="width:210px;height:210px;display:block;">
     </div>
-    
-    <!-- Big Token Display for Quick Typing -->
     <div style="margin-bottom:10px;">
       <div style="font-size:11px;color:var(--text-muted);font-weight:700;">KODE TOKEN TEKS SINGKAT:</div>
       <div id="kios-short-token" style="font-size:24px;font-weight:800;letter-spacing:2px;color:var(--primary);cursor:pointer;font-family:monospace;" onclick="copyShortToken()" title="Ketuk untuk menyalin">TK-XXXXXX</div>
     </div>
-
     <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;">
       Berganti otomatis dalam: <strong id="kios-countdown" style="color:var(--primary);">45</strong> detik
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" style="flex:1;" onclick="copyShortToken()">📋 Salin Token</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="copyShortToken()">Salin Token</button>
       <button class="btn btn-secondary" style="flex:1;" onclick="closeKiosHostModal()">Tutup</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL 4: PRESENSI VIA SCAN QR / CONVERT TEKS (KARYAWAN) -->
+<!-- MODAL 4: PRESENSI VIA TOKEN TEKS / QR (KARYAWAN) -->
 <div id="kios-scan-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Presensi via QR / Teks</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Mendukung input token teks langsung tanpa kamera</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Mendukung input token teks tanpa harus menyalakan kamera</p>
     <div class="input-group">
       <label>TIPE PRESENSI</label>
       <select id="kios-scan-type">
@@ -746,7 +776,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
         <input type="text" id="kios-token-input" placeholder="Contoh: TK-A8B9C2" style="font-family:monospace;font-weight:700;">
         <button class="btn btn-secondary" style="width:auto;padding:0 12px;font-size:12px;" onclick="pasteClipboardToken()">Tempel</button>
       </div>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Ketik kode 6 digit dari layar tablet atau tempel teks hasil scan.</p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Ketik kode token dari tablet kantor atau tempel teks hasil scan.</p>
     </div>
     <div style="display:flex;gap:8px;margin-top:14px;">
       <button class="btn btn-primary" onclick="submitKiosVerify()">Verifikasi & Absen</button>
@@ -755,17 +785,17 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
   </div>
 </div>
 
-<!-- MODAL 5: CONVERT TEKS ⇄ QR CODE GENERATOR & VIEWER -->
+<!-- MODAL 5: CONVERT TEKS ⇄ QR GENERATOR -->
 <div id="qr-text-tool-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
-    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Generator Convert Teks ⇄ QR</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Ubah teks apa saja menjadi QR Code instan tanpa kamera</p>
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Convert Teks ⇄ QR Code</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Ubah teks apa pun menjadi gambar QR Code instan</p>
     <div class="input-group">
-      <label>TEKS / KODE UNTUK DIUBAH KE QR</label>
+      <label>TEKS ATAU KODE TOKEN</label>
       <input type="text" id="tool-text-input" placeholder="Ketik teks atau token presensi...">
     </div>
-    <button class="btn btn-primary" onclick="convertTextToQr()" style="margin-bottom:14px;">⚡ Convert Teks ke QR Code</button>
-    <div id="tool-qr-result" class="hidden" style="text-align:center;padding:12px;background:rgba(255,255,255,0.05);border-radius:var(--radius-lg);margin-bottom:12px;">
+    <button class="btn btn-primary" onclick="convertTextToQr()" style="margin-bottom:14px;">Convert Teks ke QR Code</button>
+    <div id="tool-qr-result" class="hidden" style="text-align:center;padding:12px;background:var(--glass-card-nested);border-radius:var(--radius-lg);margin-bottom:12px;border:var(--glass-border);">
       <div style="background:#fff;padding:10px;border-radius:14px;display:inline-block;margin:0 auto 8px;">
         <img id="tool-qr-img" src="" alt="QR Result" style="width:180px;height:180px;display:block;">
       </div>
@@ -794,7 +824,7 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <div id="sim-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Kalkulator Tunjangan & Lembur</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Hitung estimasi tunjangan berdasarkan kehadiran</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Hitung estimasi tunjangan kehadiran</p>
     <div class="input-group">
       <label>TOTAL HARI MASUK</label>
       <input type="number" id="sim-days" value="22" oninput="calcSim()">
@@ -819,13 +849,13 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <div id="diag-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Diagnostik Perangkat & GPS</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Status integritas keamanan dan koneksi</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Status integritas koneksi dan sensor perangkat</p>
     <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
       <div class="log-card"><div>Device Fingerprint</div><strong id="dg-device" style="font-family:monospace;">DEV-XXX</strong></div>
       <div class="log-card"><div>Sensor Geolocation</div><strong id="dg-gps" style="color:var(--success);">Aktif</strong></div>
       <div class="log-card"><div>Akurasi GPS Terakhir</div><strong id="dg-acc">-- m</strong></div>
-      <div class="log-card"><div>Status Jaringan</div><strong id="dg-net" style="color:var(--success);">Online (Tersambung)</strong></div>
-      <div class="log-card"><div>Protokol Web</div><strong id="dg-proto">HTTPS / HTTP</strong></div>
+      <div class="log-card"><div>Status Jaringan</div><strong id="dg-net" style="color:var(--success);">Online</strong></div>
+      <div class="log-card"><div>Sensor Biometrik (WebAuthn)</div><strong id="dg-bio">Mengecek...</strong></div>
     </div>
     <button class="btn btn-secondary" style="margin-top:14px;" onclick="closeDiagnosticsModal()">Tutup</button>
   </div>
@@ -835,19 +865,19 @@ th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 7
 <div id="faq-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
     <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Panduan Presensi & FAQ</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Pertanyaan umum penggunaan sistem</p>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Pertanyaan umum seputar penggunaan portal</p>
     <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.4;">
       <div class="fluid-card" style="padding:12px;margin:0;">
-        <strong style="color:var(--primary);">1. Bagaimana jika GPS di HP saya tidak terdeteksi?</strong>
-        <p style="margin-top:4px;color:var(--text-muted);">Buka aplikasi melalui protokol aman <code>https://...:3006</code> atau gunakan fitur <strong>Absen QR / Teks</strong> dari tablet kios kantor.</p>
+        <strong style="color:var(--primary);">1. Bagaimana cara presensi lewat sidik jari?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Ketuk tombol <strong>Verifikasi Sidik Jari</strong> di halaman utama. Dialog biometrik bawaan ponsel (Fingerprint / Touch ID) akan muncul otomatis.</p>
       </div>
       <div class="fluid-card" style="padding:12px;margin:0;">
-        <strong style="color:var(--primary);">2. Kapan presensi dinyatakan terlambat?</strong>
-        <p style="margin-top:4px;color:var(--text-muted);">Shift Pagi masuk jam 08:00 WIB dengan toleransi maksimal 15 menit (08:15 WIB). Lebih dari itu, sistem otomatis mencatat menit keterlambatan.</p>
+        <strong style="color:var(--primary);">2. Bagaimana jika kamera ponsel rusak atau tidak diizinkan?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Gunakan menu <strong>Absen QR / Teks</strong>. Cukup masukkan atau tempel kode 6 digit dari layar tablet kantor tanpa perlu kamera.</p>
       </div>
       <div class="fluid-card" style="padding:12px;margin:0;">
-        <strong style="color:var(--primary);">3. Apakah bisa absen saat internet mati?</strong>
-        <p style="margin-top:4px;color:var(--text-muted);">Bisa. Aplikasi mendukung mode luring (offline). Data Anda disimpan dan otomatis diunggah saat internet kembali tersambung.</p>
+        <strong style="color:var(--primary);">3. Bagaimana jika saya lupa kata sandi akun?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Hubungi Administrator SPPG Onyam melalui kontak WhatsApp bantuan pada menu navigasi samping.</p>
       </div>
     </div>
     <button class="btn btn-secondary" style="margin-top:14px;" onclick="closeFaqModal()">Tutup</button>
@@ -882,6 +912,7 @@ let adminAllData = [];
 let deferredInstallPrompt = null;
 let kiosHostInterval = null;
 let currentKiosRawToken = '';
+let currentTabIndex = 0;
 
 const $ = id => document.getElementById(id);
 const show = (id, on) => $(id).classList.toggle('hidden', !on);
@@ -894,6 +925,59 @@ function alertBox(boxId, type, msg) {
 function clearAlert(boxId) {
   const box = $(boxId);
   if (box) box.innerHTML = '';
+}
+
+/* SWIPEABLE TABS NAVIGATION */
+function goToTab(index) {
+  if (index < 0 || index > 2) return;
+  currentTabIndex = index;
+  const slider = $('tabs-slider');
+  slider.style.transform = `translateX(-${index * 33.333333}%)`;
+
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+
+  if (index === 0) {
+    setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
+  } else if (index === 1) {
+    if (currentUser && currentUser.role === 'admin') {
+      loadAdminData();
+      loadPendingApprovals();
+    } else {
+      loadEmployeeHistory();
+    }
+  }
+}
+
+function initSwipeGestures() {
+  const viewport = $('swipe-viewport');
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isSwiping = false;
+
+  viewport.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    isSwiping = true;
+  }, { passive: true });
+
+  viewport.addEventListener('touchend', e => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 45) {
+      if (diffX < 0 && currentTabIndex < 2) {
+        goToTab(currentTabIndex + 1);
+      } else if (diffX > 0 && currentTabIndex > 0) {
+        goToTab(currentTabIndex - 1);
+      }
+    }
+  }, { passive: true });
 }
 
 /* Sidebar Drawer Toggle */
@@ -944,7 +1028,7 @@ function applyTheme(theme) {
   localStorage.setItem('app_theme', theme);
   $('theme-icon-sun').classList.toggle('hidden', theme !== 'dark');
   $('theme-icon-moon').classList.toggle('hidden', theme === 'dark');
-  $('meta-theme-color').setAttribute('content', theme === 'dark' ? '#07090e' : '#f1f5f9');
+  $('meta-theme-color').setAttribute('content', theme === 'dark' ? '#06080d' : '#f8fafc');
   if (mapInstance) {
     mapInstance.eachLayer(l => { if (l._url) mapInstance.removeLayer(l); });
     const tileUrl = theme === 'dark' 
@@ -957,7 +1041,7 @@ function applyTheme(theme) {
 /* Fetch & Render Live Weather (Open-Meteo) */
 async function fetchLiveWeather() {
   try {
-    $('wt-kondisi').textContent = 'Memperbarui cuaca...';
+    $('wt-kondisi').textContent = 'Memperbarui...';
     const res = await fetch('/api/weather');
     const data = await res.json();
     if (data.ok || data.success) {
@@ -966,16 +1050,13 @@ async function fetchLiveWeather() {
       $('wt-kondisi').textContent = data.kondisi;
       $('wt-lembab').textContent = `${data.kelembaban}%`;
       $('wt-angin').textContent = `${data.angin} km/h`;
-      
-      const icons = { 'sun': '☀️', 'cloud-sun': '⛅', 'cloud': '☁️', 'fog': '🌫️', 'rain': '🌧️', 'heavy-rain': '⛈️', 'storm': '⚡' };
-      $('wt-icon').textContent = icons[data.icon] || '⛅';
 
       if (data.besok) {
         $('wt-besok').textContent = `Besok: ${data.besok.suhu_min}° - ${data.besok.suhu_max}° (${data.besok.kondisi})`;
       }
     }
   } catch (e) {
-    console.warn('Weather fetch error:', e);
+    console.warn('Weather error:', e);
   }
 }
 
@@ -1090,7 +1171,7 @@ function initMap() {
 
     highlightCurrentBranch();
   } catch(e) {
-    console.warn('Leaflet map init error:', e);
+    console.warn('Map init error:', e);
   }
 }
 
@@ -1168,7 +1249,7 @@ async function refreshGPS() {
     
     const errMsg = `${res.err}
       <div style="margin-top:8px;">
-        <button type="button" class="btn btn-secondary" style="padding:6px 10px;font-size:11.5px;width:auto;display:inline-flex;" onclick="useOfficeCoordsFallback()">📍 Gunakan Lokasi Kantor (Mode Uji Coba)</button>
+        <button type="button" class="btn btn-secondary" style="padding:6px 10px;font-size:11.5px;width:auto;display:inline-flex;" onclick="useOfficeCoordsFallback()">Gunakan Lokasi Kantor (Mode Uji Coba)</button>
       </div>`;
     alertBox('gps-alert', 'warn', errMsg);
     return;
@@ -1189,11 +1270,11 @@ function checkUserDistance() {
   
   if (isInside) {
     $('distance-box').className = 'distance-capsule ok';
-    $('dist-text').textContent = `✅ Dalam radius ${currentCabang.nama}${accText}`;
+    $('dist-text').textContent = `Dalam radius ${currentCabang.nama}${accText}`;
     clearAlert('gps-alert');
   } else {
     $('distance-box').className = 'distance-capsule bad';
-    $('dist-text').textContent = `⚠️ Di luar radius ${currentCabang.nama} (Maks ${currentCabang.radius_meter}m)${accText}`;
+    $('dist-text').textContent = `Di luar radius ${currentCabang.nama} (Maks ${currentCabang.radius_meter}m)${accText}`;
     showEmergencyOption();
   }
 
@@ -1204,7 +1285,7 @@ function useOfficeCoordsFallback() {
   currentPos = { lat: currentCabang.latitude, lng: currentCabang.longitude, isFallback: true, accuracy: 5 };
   posError = null;
   $('distance-box').className = 'distance-capsule ok';
-  $('dist-text').textContent = `📍 Mode Lokasi Kantor (${currentCabang.nama})`;
+  $('dist-text').textContent = `Mode Lokasi Kantor (${currentCabang.nama})`;
   $('dist-val').textContent = '0 m';
   clearAlert('gps-alert');
   updateMapUser(currentCabang.latitude, currentCabang.longitude, true);
@@ -1215,25 +1296,8 @@ function showEmergencyOption() {
   if (!box || box.innerHTML.includes('Gunakan Lokasi Kantor')) return;
   const btn = document.createElement('div');
   btn.style.marginTop = '8px';
-  btn.innerHTML = `<button type="button" class="btn btn-secondary" style="padding:6px 10px;font-size:11.5px;width:auto;" onclick="useOfficeCoordsFallback()">📍 Gunakan Lokasi Kantor (Mode Uji Coba)</button>`;
+  btn.innerHTML = `<button type="button" class="btn btn-secondary" style="padding:6px 10px;font-size:11.5px;width:auto;" onclick="useOfficeCoordsFallback()">Gunakan Lokasi Kantor (Mode Uji Coba)</button>`;
   box.appendChild(btn);
-}
-
-/* Tab Navigation */
-function switchTab(tabId) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-
-  show('tab-presensi', tabId === 'presensi');
-  show('tab-riwayat', tabId === 'riwayat');
-  show('tab-profil', tabId === 'profil');
-
-  if (tabId === 'presensi') {
-    setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
-  } else if (tabId === 'riwayat') {
-    if (currentUser && currentUser.role === 'admin') loadAdminData();
-    else loadEmployeeHistory();
-  }
 }
 
 /* Authentication */
@@ -1300,12 +1364,17 @@ function setupDashboardView() {
   fetchLiveWeather();
   initMap();
   refreshGPS();
+  initSwipeGestures();
 
-  if (isAdmin) loadAdminData();
-  else loadEmployeeHistory();
+  if (isAdmin) {
+    loadAdminData();
+    loadPendingApprovals();
+  } else {
+    loadEmployeeHistory();
+  }
 }
 
-/* Biometric Selfie Camera & Quality Analysis */
+/* Biometric Selfie Camera Flow */
 function triggerAttendance(type) {
   activeAttendanceType = type;
   if (!currentPos && !posError) {
@@ -1353,13 +1422,13 @@ function startLivenessMonitor() {
       const avgLum = totalLum / (64 * 64);
       const badge = $('liveness-status');
       if (avgLum < 30) {
-        badge.textContent = '⚠️ Ruangan terlalu gelap';
+        badge.textContent = 'Pencahayaan terlalu gelap';
         badge.style.color = '#ef4444';
       } else if (avgLum > 230) {
-        badge.textContent = '⚠️ Cahaya terlalu silau';
+        badge.textContent = 'Pencahayaan terlalu silau';
         badge.style.color = '#f59e0b';
       } else {
-        badge.textContent = '✅ Posisi & Cahaya Baik';
+        badge.textContent = 'Posisi dan Cahaya Baik';
         badge.style.color = '#10b981';
       }
     } catch(e) {}
@@ -1400,12 +1469,12 @@ function skipSelfieAndSubmit() {
   executeAttendanceSubmit(null);
 }
 
-async function executeAttendanceSubmit(photoData) {
-  const type = activeAttendanceType;
+async function executeAttendanceSubmit(photoData, isBiometric = false) {
+  const type = activeAttendanceType || 'Masuk';
   const pos = currentPos || { lat: currentCabang.latitude, lng: currentCabang.longitude, isFallback: true };
   const dist = getDistance(currentCabang.latitude, currentCabang.longitude, pos.lat, pos.lng);
 
-  if (dist > currentCabang.radius_meter && !pos.isFallback) {
+  if (dist > currentCabang.radius_meter && !pos.isFallback && !isBiometric) {
     alertBox('gps-alert', 'error', `Absensi ditolak! Jarak Anda ${Math.round(dist)}m dari ${currentCabang.nama} (Maks ${currentCabang.radius_meter}m).`);
     return;
   }
@@ -1422,7 +1491,8 @@ async function executeAttendanceSubmit(photoData) {
     device_id: getDeviceFingerprint(),
     accuracy: pos.accuracy || null,
     isFallback: !!pos.isFallback,
-    note: pos.isFallback ? '[Mode Uji Coba]' : ''
+    is_biometric: isBiometric,
+    note: isBiometric ? '[Verifikasi Sidik Jari]' : (pos.isFallback ? '[Mode Uji Coba]' : '')
   };
 
   try {
@@ -1433,13 +1503,68 @@ async function executeAttendanceSubmit(photoData) {
     });
     const data = await res.json();
     if (data.ok || data.success) {
-      alertBox('gps-alert', 'success', `🎉 Presensi ${type} berhasil dicatat (${data.status || 'Hadir'}).`);
+      alertBox('gps-alert', 'success', `Presensi ${type} berhasil dicatat (${data.status || 'Hadir'}).`);
       loadEmployeeHistory();
     } else {
       alertBox('gps-alert', 'error', data.error || data.message || 'Gagal mencatat absensi.');
     }
   } catch(e) {
     alertBox('gps-alert', 'error', 'Gagal terhubung ke server.');
+  }
+}
+
+/* NATIVE WEBAUTHN FINGERPRINT VERIFICATION */
+async function triggerFingerprintAttendance(type = 'Masuk') {
+  activeAttendanceType = type;
+  if (!window.PublicKeyCredential) {
+    return alert('Browser atau perangkat ini belum mendukung standar WebAuthn Biometrik.');
+  }
+
+  try {
+    const challenge = new Uint8Array(32);
+    window.crypto.getRandomValues(challenge);
+
+    const credentialOptions = {
+      challenge: challenge,
+      rp: { name: 'SPPG Onyam Presensi', id: window.location.hostname },
+      user: {
+        id: Uint8Array.from(currentUser.id, c => c.charCodeAt(0)),
+        name: currentUser.id,
+        displayName: currentUser.name || currentUser.nama || currentUser.id
+      },
+      pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+      authenticatorSelection: {
+        authenticatorAttachment: 'platform',
+        userVerification: 'required'
+      },
+      timeout: 60000
+    };
+
+    let cred = null;
+    try {
+      cred = await navigator.credentials.create({ publicKey: credentialOptions });
+    } catch(errCreate) {
+      cred = await navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          userVerification: 'required',
+          rpId: window.location.hostname,
+          timeout: 60000
+        }
+      });
+    }
+
+    if (cred) {
+      alertBox('gps-alert', 'success', 'Sidik jari berhasil diverifikasi. Mencatat presensi...');
+      executeAttendanceSubmit(null, true);
+    }
+  } catch(err) {
+    console.warn('Biometric error:', err);
+    if (err.name === 'NotAllowedError') {
+      alert('Verifikasi sidik jari dibatalkan oleh pengguna.');
+    } else {
+      alert('Sensor biometrik tidak dapat diakses (' + (err.message || err.name) + '). Gunakan tombol Absen biasa atau Token Kios.');
+    }
   }
 }
 
@@ -1467,15 +1592,15 @@ async function submitLeave() {
     });
     const data = await res.json();
     if (data.ok || data.success) {
-      alertBox('gps-alert', 'success', `Pengajuan ${type} berhasil dikirim.`);
+      alertBox('gps-alert', 'success', `Permohonan ${type} berhasil dikirim dan menunggu persetujuan admin.`);
       $('leave-note').value = '';
       toggleLeaveModal(false);
       loadEmployeeHistory();
     } else {
-      alertBox('gps-alert', 'error', data.error || data.message || 'Gagal mengirim pengajuan.');
+      alertBox('gps-alert', 'error', data.error || data.message || 'Gagal mengirim permohonan.');
     }
   } catch(e) {
-    alertBox('gps-alert', 'error', 'Gagal mengirim pengajuan.');
+    alertBox('gps-alert', 'error', 'Gagal mengirim permohonan.');
   }
 }
 
@@ -1511,6 +1636,72 @@ async function loadEmployeeHistory() {
     }).join('');
   } catch(e) {
     container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Gagal memuat riwayat.</p>';
+  }
+}
+
+/* Admin Approval Workflow (Persetujuan Izin / Cuti) */
+async function loadPendingApprovals() {
+  const list = $('pending-approval-list');
+  const countBadge = $('approval-count');
+  try {
+    const res = await fetch('/api/admin/pending-approvals');
+    const data = await res.json();
+    const rows = data.data || [];
+
+    countBadge.textContent = `${rows.length} Menunggu`;
+    countBadge.className = rows.length > 0 ? 'badge badge-warn' : 'badge badge-hadir';
+
+    if (!rows.length) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;text-align:center;padding:10px 0;">Tidak ada permohonan yang menunggu persetujuan.</p>';
+      return;
+    }
+
+    list.innerHTML = rows.map(r => `
+      <div class="approval-card">
+        <div class="approval-header">
+          <div>
+            <strong>${r.nama}</strong> <span style="color:var(--text-muted);font-size:11px;">(${r.karyawan_id})</span>
+          </div>
+          <span class="badge badge-izin">${r.tipe}</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin:3px 0;">
+          Tanggal: ${r.tanggal} ${r.waktu ? '&middot; ' + r.waktu : ''}
+        </div>
+        <div style="font-size:12px;margin:4px 0;background:rgba(0,0,0,0.15);padding:6px 8px;border-radius:6px;">
+          ${r.keterangan || 'Tanpa keterangan tertulis'}
+        </div>
+        <div class="approval-actions">
+          <button class="btn-approve" onclick="handleAdminApproval(${r.id}, 'approve')">Setujui</button>
+          <button class="btn-reject" onclick="handleAdminApproval(${r.id}, 'reject')">Tolak</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:12px;">Gagal memuat permohonan persetujuan.</p>';
+  }
+}
+
+async function handleAdminApproval(absensiId, action) {
+  let note = '';
+  if (action === 'reject') {
+    note = prompt('Masukkan alasan penolakan (opsional):') || '';
+  }
+
+  try {
+    const res = await fetch('/api/admin/approval', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: absensiId, action, note })
+    });
+    const data = await res.json();
+    if (data.ok || data.success) {
+      loadPendingApprovals();
+      loadAdminData();
+    } else {
+      alert(data.error || 'Gagal memproses persetujuan.');
+    }
+  } catch(e) {
+    alert('Koneksi ke server gagal.');
   }
 }
 
@@ -1631,7 +1822,7 @@ async function fetchKiosToken() {
 function copyShortToken() {
   if (!currentKiosRawToken) return;
   navigator.clipboard.writeText(currentKiosRawToken).then(() => {
-    alert(`Token ${currentKiosRawToken} berhasil disalin ke clipboard!`);
+    alert(`Token ${currentKiosRawToken} disalin ke clipboard.`);
   }).catch(() => {
     alert(`Kode Token: ${currentKiosRawToken}`);
   });
@@ -1642,7 +1833,7 @@ function closeKiosHostModal() {
   show('kios-host-modal', false);
 }
 
-/* EMPLOYEE QR / TEXT TOKEN SUBMIT (NO CAMERA REQUIRED) */
+/* EMPLOYEE QR / TEXT TOKEN SUBMIT */
 function openKiosScanModal() {
   show('kios-scan-modal', true);
 }
@@ -1655,7 +1846,7 @@ async function pasteClipboardToken() {
     const text = await navigator.clipboard.readText();
     if (text) $('kios-token-input').value = text.trim();
   } catch (e) {
-    alert('Silakan ketik manual token yang tertera di tablet kantor.');
+    alert('Silakan ketik manual token yang tertera di tablet.');
   }
 }
 
@@ -1678,7 +1869,7 @@ async function submitKiosVerify() {
     });
     const data = await res.json();
     if (data.ok || data.success) {
-      alertBox('gps-alert', 'success', `🎉 Presensi via Token ${type} berhasil dicatat.`);
+      alertBox('gps-alert', 'success', `Presensi via Token ${type} berhasil dicatat.`);
       closeKiosScanModal();
       loadEmployeeHistory();
     } else {
@@ -1718,7 +1909,7 @@ async function convertTextToQr() {
   }
 }
 
-/* SIDEBAR MODALS: HOLIDAY, SIMULATION, DIAGNOSTICS, FAQ */
+/* SIDEBAR MODALS */
 function openHolidayModal() { show('holiday-modal', true); }
 function closeHolidayModal() { show('holiday-modal', false); }
 
@@ -1740,8 +1931,8 @@ function openDiagnosticsModal() {
   $('dg-device').textContent = getDeviceFingerprint();
   $('dg-gps').textContent = navigator.geolocation ? 'Didukung & Aktif' : 'Tidak Didukung';
   $('dg-acc').textContent = currentPos && currentPos.accuracy ? `±${Math.round(currentPos.accuracy)} meter` : 'Belum sinkron';
-  $('dg-net').textContent = navigator.onLine ? 'Online (Tersambung)' : 'Offline (Luring)';
-  $('dg-proto').textContent = window.location.protocol.toUpperCase().replace(':', '');
+  $('dg-net').textContent = navigator.onLine ? 'Online' : 'Offline';
+  $('dg-bio').textContent = window.PublicKeyCredential ? 'Didukung (WebAuthn Siap)' : 'Tidak Didukung';
   show('diag-modal', true);
 }
 function closeDiagnosticsModal() { show('diag-modal', false); }
@@ -1749,7 +1940,7 @@ function closeDiagnosticsModal() { show('diag-modal', false); }
 function openFaqModal() { show('faq-modal', true); }
 function closeFaqModal() { show('faq-modal', false); }
 
-/* Kirim Rekap WhatsApp On-Demand */
+/* Kirim Rekap WhatsApp */
 async function sendWaReportNow() {
   try {
     const res = await fetch('/api/notify-absensi', {
@@ -1757,10 +1948,10 @@ async function sendWaReportNow() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'manual_briefing',
-        message: `📢 *REKAP PRESENSI HARIAN DIMINTA ADMIN*\n📅 Tanggal: ${$('filter-date').value || new Date().toISOString().split('T')[0]}\n✅ Hadir: ${$('st-hadir').textContent}\n⏰ Terlambat: ${$('st-telat').textContent}\n📝 Izin/Sakit: ${$('st-izin').textContent}\n❌ Belum Absen: ${$('st-belum').textContent}\n🌐 Panel: https://103.253.245.145:3006`
+        message: `*REKAP PRESENSI HARIAN (PERMINTAAN ADMIN)*\nTanggal: ${$('filter-date').value || new Date().toISOString().split('T')[0]}\nHadir: ${$('st-hadir').textContent}\nTerlambat: ${$('st-telat').textContent}\nIzin/Sakit: ${$('st-izin').textContent}\nBelum Absen: ${$('st-belum').textContent}\nPanel: https://103.253.245.145:3006`
       })
     });
-    alert('Laporan berhasil diteruskan ke WhatsApp Bot!');
+    alert('Laporan berhasil diteruskan ke WhatsApp Bot.');
   } catch (e) {
     alert('Laporan gagal dikirim.');
   }
@@ -1787,7 +1978,7 @@ async function doChangePassword() {
       alertBox('pass-alert', 'error', data.error || data.message || 'Gagal mengubah password.');
     }
   } catch(e) {
-    alertBox('pass-alert', 'error', 'Error koneksi ke server.');
+    alertBox('pass-alert', 'error', 'Koneksi ke server gagal.');
   }
 }
 
@@ -1808,7 +1999,7 @@ function installPWA() {
       deferredInstallPrompt = null;
     });
   } else {
-    alert('Untuk memasang di HP:\n- Chrome/Edge: Ketuk menu titik tiga (⋮) lalu pilih "Tambahkan ke Layar Utama".\n- Safari iOS: Ketuk tombol Share lalu pilih "Add to Home Screen".');
+    alert('Untuk memasang di HP:\n- Chrome/Edge: Ketuk menu titik tiga (⋮) lalu pilih "Tambahkan ke Layar Utama".\n- Safari iOS: Ketuk tombol Bagikan lalu pilih "Add to Home Screen".');
   }
 }
 

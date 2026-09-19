@@ -486,9 +486,14 @@ const handleAbsen = (req, res) => {
   }
 
   // Evaluasi Jam Kerja & Status Presensi
+  if (body.is_biometric) {
+    const bioTag = "[Sidik Jari]";
+    keterangan = keterangan ? `${keterangan} ${bioTag}` : bioTag;
+  }
+
   if (!status) {
     if (tipeLower === "izin" || tipeLower === "sakit" || tipeLower === "cuti") {
-      status = tipe.charAt(0).toUpperCase() + tipe.slice(1);
+      status = `${tipe.charAt(0).toUpperCase() + tipe.slice(1)} (Menunggu Persetujuan)`;
     } else {
       const maxRadius = selectedCabang ? selectedCabang.radius_meter : 50;
       if (jarak_meter !== undefined && jarak_meter !== null && Number(jarak_meter) > maxRadius && !body.isFallback) {
@@ -692,6 +697,59 @@ function handleRekap(req, res) {
 
 app.get("/api/rekap", handleRekap);
 app.get("/api/admin/rekap", handleRekap);
+
+// 8b. ADMIN APPROVAL IZIN & CUTI
+app.get("/api/admin/pending-approvals", (req, res) => {
+  try {
+    const rows = db.prepare(`
+      SELECT a.id, a.karyawan_id, k.nama, a.tanggal, a.waktu, a.tipe, a.status, a.keterangan, a.foto
+      FROM absensi a
+      JOIN karyawan k ON a.karyawan_id = k.id
+      WHERE a.status LIKE '%Menunggu Persetujuan%'
+      ORDER BY a.id DESC
+    `).all();
+    res.json({ ok: true, success: true, data: rows });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+app.post("/api/admin/approval", (req, res) => {
+  try {
+    const { id, action, note } = req.body || {};
+    if (!id || !action) {
+      return res.status(400).json({ ok: false, error: "ID absensi dan aksi wajib disertakan." });
+    }
+    const row = db.prepare("SELECT * FROM absensi WHERE id = ?").get(id);
+    if (!row) {
+      return res.status(404).json({ ok: false, error: "Data permohonan tidak ditemukan." });
+    }
+    const tipeClean = row.tipe.charAt(0).toUpperCase() + row.tipe.slice(1);
+    const newStatus = action === "approve" ? `${tipeClean} (Disetujui)` : `${tipeClean} (Ditolak)`;
+    let updatedNote = row.keterangan || "";
+    if (note) {
+      updatedNote = updatedNote ? `${updatedNote} [Catatan: ${note}]` : `[Catatan: ${note}]`;
+    }
+    db.prepare("UPDATE absensi SET status = ?, keterangan = ? WHERE id = ?").run(newStatus, updatedNote, id);
+
+    // Kirim notifikasi via bot WhatsApp
+    const user = db.prepare("SELECT nama FROM karyawan WHERE id = ?").get(row.karyawan_id);
+    sendWaNotification({
+      type: "approval_status",
+      message: `*STATUS PERSETUJUAN IZIN / CUTI*\n\n` +
+        `Karyawan: ${user ? user.nama : row.karyawan_id} (${row.karyawan_id})\n` +
+        `Jenis: ${tipeClean}\n` +
+        `Tanggal: ${row.tanggal}\n` +
+        `Keputusan: ${action === "approve" ? "DISETUJUI" : "DITOLAK"}\n` +
+        (note ? `Catatan: ${note}\n` : "") +
+        `Waktu Update: ${new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta' })} WIB`
+    });
+
+    res.json({ ok: true, success: true, message: `Permohonan berhasil ${action === "approve" ? "disetujui" : "ditolak"}.`, status: newStatus });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
 
 // 9. LIST KARYAWAN
 app.get("/api/karyawan", (req, res) => {
