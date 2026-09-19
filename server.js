@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public"), { etag: false, lastModified: false, setHeaders: (res) => res.set("Cache-Control", "no-store") }));
 app.use(express.static(path.join(__dirname, 'public'), {
   etag: false,
   lastModified: false,
