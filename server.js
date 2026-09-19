@@ -268,43 +268,141 @@ app.get("/api/shifts", (req, res) => {
   res.json({ ok: true, success: true, data: rows });
 });
 
-// 5. API KIOS QR DINAMIS
+// 5. API CUACA LOKAL (OPEN-METEO)
+let weatherCache = { data: null, timestamp: 0 };
+app.get("/api/weather", async (req, res) => {
+  const now = Date.now();
+  if (weatherCache.data && (now - weatherCache.timestamp < 10 * 60 * 1000)) {
+    return res.json(weatherCache.data);
+  }
+
+  try {
+    const fetchRes = await fetch("https://api.open-meteo.com/v1/forecast?latitude=-6.0935&longitude=106.3642&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FBangkok");
+    const json = await fetchRes.json();
+    
+    const codeToCondition = (code) => {
+      if (code === 0) return { label: "Cerah", icon: "sun" };
+      if ([1, 2, 3].includes(code)) return { label: "Cerah Berawan", icon: "cloud-sun" };
+      if ([45, 48].includes(code)) return { label: "Berkabut", icon: "fog" };
+      if ([51, 53, 55, 61, 63, 65].includes(code)) return { label: "Hujan Ringan", icon: "rain" };
+      if ([80, 81, 82].includes(code)) return { label: "Hujan Deras", icon: "heavy-rain" };
+      if ([95, 96, 99].includes(code)) return { label: "Badai Petir", icon: "storm" };
+      return { label: "Berawan", icon: "cloud" };
+    };
+
+    const currentCondition = codeToCondition(json.current.weather_code);
+    const tomorrowCondition = codeToCondition(json.daily.weather_code[1] || json.daily.weather_code[0]);
+
+    const result = {
+      ok: true,
+      success: true,
+      lokasi: "Cipaeh, Tangerang",
+      suhu: Math.round(json.current.temperature_2m),
+      kelembaban: Math.round(json.current.relative_humidity_2m),
+      angin: Math.round(json.current.wind_speed_10m),
+      kondisi: currentCondition.label,
+      icon: currentCondition.icon,
+      besok: {
+        suhu_min: Math.round(json.daily.temperature_2m_min[1]),
+        suhu_max: Math.round(json.daily.temperature_2m_max[1]),
+        kondisi: tomorrowCondition.label,
+        icon: tomorrowCondition.icon
+      }
+    };
+
+    weatherCache = { data: result, timestamp: now };
+    res.json(result);
+  } catch (err) {
+    res.json({
+      ok: true,
+      success: true,
+      lokasi: "Cipaeh, Tangerang",
+      suhu: 29,
+      kelembaban: 76,
+      angin: 10,
+      kondisi: "Cerah Berawan",
+      icon: "cloud-sun",
+      besok: {
+        suhu_min: 24,
+        suhu_max: 33,
+        kondisi: "Hujan Ringan",
+        icon: "rain"
+      }
+    });
+  }
+});
+
+// 6. API CONVERT TEXT KE QR CODE
 const QRCode = require("qrcode");
 
+app.post("/api/qr/convert", async (req, res) => {
+  try {
+    const text = req.body && req.body.text ? String(req.body.text).trim() : "";
+    if (!text) {
+      return res.status(400).json({ ok: false, error: "Teks wajib diisi untuk dikonversi ke QR." });
+    }
+    const qrImage = await QRCode.toDataURL(text, { width: 320, margin: 1 });
+    res.json({ ok: true, success: true, text, qr_image: qrImage });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// 7. API KIOS QR DINAMIS & TEXT TOKEN
 app.get("/api/kios/token", async (req, res) => {
   try {
     const cabang_id = req.query.cabang_id || "CAB-01";
     const now = Date.now();
-    const expires_at = now + 35000;
-    const token = crypto.randomBytes(16).toString("hex");
+    const expires_at = now + 45000;
+    // Token singkat bersahabat 6 karakter (mudah diketik manual)
+    const shortToken = "TK-" + crypto.randomBytes(3).toString("hex").toUpperCase();
     
-    // Hapus token lama
+    // Hapus token kedaluwarsa
     db.prepare("DELETE FROM kios_tokens WHERE expires_at < ?").run(now);
-    db.prepare("INSERT INTO kios_tokens (token, cabang_id, created_at, expires_at) VALUES (?, ?, ?, ?)").run(token, cabang_id, now, expires_at);
+    db.prepare("INSERT INTO kios_tokens (token, cabang_id, created_at, expires_at) VALUES (?, ?, ?, ?)").run(shortToken, cabang_id, now, expires_at);
     
-    const qrPayload = JSON.stringify({ token, cabang_id, t: now });
+    const qrPayload = JSON.stringify({ token: shortToken, cabang_id, t: now });
     const qrImage = await QRCode.toDataURL(qrPayload, { width: 280, margin: 1 });
 
-    res.json({ ok: true, success: true, token, expires_at, cabang_id, qr_image: qrImage });
+    res.json({
+      ok: true,
+      success: true,
+      token: shortToken,
+      raw_payload: qrPayload,
+      expires_at,
+      cabang_id,
+      qr_image: qrImage
+    });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
 app.post("/api/kios/verify", (req, res) => {
-  const { token, id, type, shift_id, device_id } = req.body || {};
+  let { token, id, type, shift_id, device_id } = req.body || {};
   if (!token || !id || !type) {
     return res.status(400).json({ ok: false, success: false, error: "Token dan identitas wajib disertakan." });
   }
+  
+  // Dukungan parse jika user paste full string JSON hasil scan kamera/text
+  let cleanToken = String(token).trim();
+  if (cleanToken.startsWith("{") && cleanToken.includes("token")) {
+    try {
+      const parsed = JSON.parse(cleanToken);
+      if (parsed.token) cleanToken = parsed.token;
+    } catch(e) {}
+  }
+  cleanToken = cleanToken.toUpperCase();
+
   const now = Date.now();
-  const row = db.prepare("SELECT * FROM kios_tokens WHERE token = ? AND expires_at > ?").get(token, now);
+  const row = db.prepare("SELECT * FROM kios_tokens WHERE UPPER(token) = ? AND expires_at > ?").get(cleanToken, now);
   if (!row) {
-    return res.status(400).json({ ok: false, success: false, error: "QR Code Kios kedaluwarsa atau tidak valid. Silakan scan ulang." });
+    return res.status(400).json({ ok: false, success: false, error: "Token / QR Kios tidak valid atau sudah kedaluwarsa. Silakan gunakan token terbaru." });
   }
   
   req.body.jarak_meter = 0;
   req.body.cabang_id = row.cabang_id;
-  req.body.keterangan = "[Verifikasi Kios QR]";
+  req.body.keterangan = `[Kios Token: ${cleanToken}]`;
   return handleAbsen(req, res);
 });
 

@@ -2,10 +2,10 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sistem Presensi SPPG Onyam Gunung Keler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SPPG Onyam &middot; Portal Presensi Modern</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b0f19" id="meta-theme-color">
+<meta name="theme-color" content="#0a0e17" id="meta-theme-color">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
@@ -21,133 +21,240 @@
 
 <style>
 :root {
-  --bg: #0b0f19;
-  --bg-card: rgba(17, 24, 39, 0.78);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-focus: #3b82f6;
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --input-bg: rgba(15, 23, 42, 0.85);
-  --stat-bg: rgba(15, 23, 42, 0.7);
-  --clock-grad-1: rgba(30, 41, 59, 0.6);
-  --clock-grad-2: rgba(15, 23, 42, 0.85);
-  --table-header: rgba(30, 41, 59, 0.85);
-  --nav-bg: rgba(15, 23, 42, 0.88);
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --bg-dark: #07090e;
+  --bg-card-dark: rgba(22, 28, 45, 0.65);
+  --border-dark: rgba(255, 255, 255, 0.14);
+  --text-dark: #f8fafc;
+  --text-muted-dark: #94a3b8;
+  --input-bg-dark: rgba(15, 23, 42, 0.6);
+  --glass-specular-dark: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --nav-bg-dark: rgba(13, 18, 30, 0.78);
+  --modal-bg-dark: rgba(15, 23, 42, 0.85);
+
+  --bg-light: #f1f5f9;
+  --bg-card-light: rgba(255, 255, 255, 0.75);
+  --border-light: rgba(0, 0, 0, 0.08);
+  --text-light: #0f172a;
+  --text-muted-light: #64748b;
+  --input-bg-light: rgba(255, 255, 255, 0.9);
+  --glass-specular-light: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
+  --nav-bg-light: rgba(255, 255, 255, 0.82);
+  --modal-bg-light: rgba(255, 255, 255, 0.92);
+
   --primary: #3b82f6;
-  --primary-glow: rgba(59, 130, 246, 0.25);
+  --primary-glow: rgba(59, 130, 246, 0.35);
   --success: #10b981;
-  --success-glow: rgba(16, 185, 129, 0.25);
+  --success-glow: rgba(16, 185, 129, 0.3);
   --warn: #f59e0b;
   --danger: #ef4444;
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --modal-bg: rgba(17, 24, 39, 0.95);
+  --radius-xl: 26px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+}
+
+[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --bg-card: var(--bg-card-dark);
+  --border: var(--border-dark);
+  --border-specular: var(--glass-specular-dark);
+  --text: var(--text-dark);
+  --text-muted: var(--text-muted-dark);
+  --input-bg: var(--input-bg-dark);
+  --nav-bg: var(--nav-bg-dark);
+  --modal-bg: var(--modal-bg-dark);
+  --weather-grad: linear-gradient(135deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.65) 100%);
 }
 
 [data-theme="light"] {
-  --bg: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --border: rgba(0, 0, 0, 0.09);
-  --border-focus: #2563eb;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --input-bg: #ffffff;
-  --stat-bg: #ffffff;
-  --clock-grad-1: #ffffff;
-  --clock-grad-2: #f1f5f9;
-  --table-header: #f1f5f9;
-  --nav-bg: rgba(255, 255, 255, 0.92);
-  --primary: #2563eb;
-  --primary-glow: rgba(37, 99, 235, 0.2);
-  --modal-bg: #ffffff;
+  --bg: var(--bg-light);
+  --bg-card: var(--bg-card-light);
+  --border: var(--border-light);
+  --border-specular: var(--glass-specular-light);
+  --text: var(--text-light);
+  --text-muted: var(--text-muted-light);
+  --input-bg: var(--input-bg-light);
+  --nav-bg: var(--nav-bg-light);
+  --modal-bg: var(--modal-bg-light);
+  --weather-grad: linear-gradient(135deg, rgba(219, 234, 254, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 90px; overflow-x: hidden; transition: background 0.25s ease, color 0.25s ease; }
-
-/* Background Glow */
-body::before {
-  content: ''; position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-  width: 520px; height: 520px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
-  z-index: -1; pointer-events: none;
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font); -webkit-tap-highlight-color: transparent; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 96px;
+  overflow-x: hidden;
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+  position: relative;
 }
 
-.container { max-width: 480px; margin: 0 auto; padding: 16px; }
+/* Fluid iPhone Ambient Lighting Orbs */
+.ambient-glow-1 {
+  position: fixed; top: -120px; left: -80px; width: 340px; height: 340px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.28) 0%, rgba(139, 92, 246, 0.15) 50%, transparent 70%);
+  border-radius: 50%; filter: blur(50px); pointer-events: none; z-index: -1; animation: floatSlow 18s ease-in-out infinite alternate;
+}
+.ambient-glow-2 {
+  position: fixed; top: 35%; right: -120px; width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.12) 50%, transparent 70%);
+  border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: -1; animation: floatSlow 24s ease-in-out infinite alternate-reverse;
+}
+.ambient-glow-3 {
+  position: fixed; bottom: -80px; left: 20%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(99, 102, 241, 0.12) 50%, transparent 70%);
+  border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: -1;
+}
+@keyframes floatSlow {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 40px) scale(1.08); }
+}
+
+.container { max-width: 460px; margin: 0 auto; padding: 14px 16px; }
 .hidden { display: none !important; }
 
-/* Cards & Glassmorphism */
-.glass {
+/* iPhone Fluid Frosted Glass Card */
+.fluid-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
-  transition: all 0.25s ease;
+  margin-bottom: 14px;
+  box-shadow: 0 12px 35px -8px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
 }
 
-/* Header */
-.top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 4px 2px; }
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand-icon { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
-.brand-text h1 { font-size: 15px; font-weight: 700; line-height: 1.2; }
-.brand-text p { font-size: 11px; color: var(--text-muted); }
+/* Header & Dynamic Capsule */
+.top-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 4px 2px; }
+.header-left { display: flex; align-items: center; gap: 10px; }
+.btn-icon {
+  width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; transition: all 0.2s ease;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.btn-icon:active { transform: scale(0.92); }
+.btn-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; }
 
-.header-actions { display: flex; align-items: center; gap: 8px; }
-.theme-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-.theme-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+.brand-capsule {
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px;
+  border-radius: 24px; background: var(--bg-card); border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); backdrop-filter: blur(20px);
+}
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulseDot 2s infinite; }
+.brand-capsule h1 { font-size: 13.5px; font-weight: 800; letter-spacing: -0.02em; }
+.brand-capsule span { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
-/* Live Clock Display */
-.clock-card { text-align: center; padding: 20px 16px; background: linear-gradient(180deg, var(--clock-grad-1) 0%, var(--clock-grad-2) 100%); }
-.clock-time { font-size: 40px; font-weight: 800; letter-spacing: -1px; }
-.clock-date { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
-.shift-badge { display: inline-block; margin-top: 8px; font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); }
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
 
-/* Interactive Map */
-#map-container { height: 180px; width: 100%; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); position: relative; z-index: 1; }
-.distance-banner { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px; border: 1px solid var(--border); }
-.distance-banner.ok { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: #10b981; }
-.distance-banner.bad { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+/* iOS Weather Widget */
+.weather-card {
+  background: var(--weather-grad);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.weather-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.weather-loc { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+.weather-temp { font-size: 38px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 4px 0 2px; }
+.weather-cond { font-size: 12.5px; font-weight: 600; color: var(--primary); }
+.weather-icon-wrap { font-size: 38px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
+.weather-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+  font-size: 11.5px; color: var(--text-muted);
+}
+.weather-pill { padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
 
-/* Action Buttons */
+/* Clock Card */
+.clock-card { text-align: center; padding: 22px 16px; }
+.clock-time { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
+.clock-date { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
+.shift-pill {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  font-size: 11.5px; font-weight: 700; padding: 5px 14px; border-radius: 20px;
+  background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Interactive Radar Map */
+#map-container { height: 180px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); position: relative; z-index: 1; }
+.distance-capsule {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; border-radius: var(--radius-md); font-size: 12px; margin-bottom: 12px;
+  border: 1px solid var(--border); backdrop-filter: blur(12px);
+}
+.distance-capsule.ok { background: rgba(16, 185, 129, 0.14); border-color: rgba(16, 185, 129, 0.3); color: #10b981; }
+.distance-capsule.bad { background: rgba(239, 68, 68, 0.14); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
+/* Buttons & iOS Segmented Tactile */
 .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.btn-action { padding: 15px 12px; border: none; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; }
-.btn-action:active { transform: scale(0.98); }
-.btn-masuk { background: linear-gradient(135deg, #059669, #10b981); color: #fff; box-shadow: 0 4px 18px var(--success-glow); }
-.btn-pulang { background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff; box-shadow: 0 4px 18px rgba(239, 68, 68, 0.3); }
+.btn-action {
+  padding: 16px 12px; border: none; border-radius: var(--radius-lg);
+  font-size: 13.5px; font-weight: 700; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.16s ease;
+  box-shadow: 0 6px 20px -4px rgba(0,0,0,0.3);
+}
+.btn-action:active { transform: scale(0.95); }
+.btn-masuk { background: linear-gradient(135deg, #059669, #10b981); color: #fff; }
+.btn-pulang { background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff; }
 
-.btn { width: 100%; padding: 12px; border-radius: var(--radius-md); border: none; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.btn-primary { background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff; box-shadow: 0 4px 16px var(--primary-glow); }
-.btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text); border: 1px solid var(--border); }
-[data-theme="light"] .btn-secondary { background: #f1f5f9; color: #0f172a; border-color: rgba(0,0,0,0.1); }
-.btn-secondary:hover { background: rgba(255, 255, 255, 0.14); }
-.btn:active { transform: scale(0.98); }
+.btn {
+  width: 100%; padding: 13px; border-radius: var(--radius-md); border: none;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.2s;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: linear-gradient(135deg, #2563eb, #3b82f6); color: #fff; box-shadow: 0 4px 18px var(--primary-glow); }
+.btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); backdrop-filter: blur(12px); }
 
 /* Form Controls */
 .input-group { margin-bottom: 12px; text-align: left; }
-.input-group label { display: block; font-size: 11.5px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
 input[type=text], input[type=password], input[type=date], select, textarea {
-  width: 100%; padding: 11px 13px; background: var(--input-bg); border: 1px solid var(--border);
+  width: 100%; padding: 12px 14px; background: var(--input-bg); border: 1px solid var(--border);
   border-radius: var(--radius-md); color: var(--text); font-size: 13.5px; outline: none; transition: border-color 0.2s;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--primary-glow); }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
 
-/* Bottom Floating Navigation Bar */
+/* iOS Bottom Tab Bar */
 .bottom-nav {
-  position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 440px;
-  background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border); border-radius: 28px; display: flex; justify-content: space-around;
-  padding: 8px; z-index: 999; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 28px); max-width: 430px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(30px) saturate(210%);
+  -webkit-backdrop-filter: blur(30px) saturate(210%);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  display: flex; justify-content: space-around;
+  padding: 8px 6px; z-index: 990;
+  box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
-.nav-item { flex: 1; text-align: center; padding: 8px 4px; border-radius: 20px; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.nav-item svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; transition: all 0.25s; }
+.nav-item {
+  flex: 1; text-align: center; padding: 7px 4px; border-radius: 22px;
+  color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.nav-item svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: transform 0.2s; }
 .nav-item.active { color: var(--primary); background: var(--primary-glow); }
-.nav-item.active svg { stroke: var(--primary); transform: translateY(-1px); }
+.nav-item.active svg { transform: translateY(-1px); stroke: var(--primary); }
 
-/* Badges & Tables */
+/* Badges */
 .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: 12px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
 .badge-hadir { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
 .badge-telat { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
@@ -155,93 +262,138 @@ input:focus, select:focus, textarea:focus { border-color: var(--border-focus); b
 .badge-ditolak { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 .badge-belum { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
 
-.log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--radius-md); background: var(--stat-bg); border: 1px solid var(--border); margin-bottom: 8px; }
-.log-left { display: flex; align-items: center; gap: 10px; }
-.log-avatar { width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; }
-.log-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.log-title { font-size: 13px; font-weight: 700; }
-.log-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+/* Sidebar Drawer (iOS Slide-Over Sheet) */
+.drawer-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.drawer-backdrop.active { opacity: 1; pointer-events: auto; }
 
-/* Admin Analytics Grid */
-.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-.stat-box { background: var(--stat-bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; text-align: center; }
-.stat-box .num { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
-.stat-box .lbl { font-size: 10.5px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+.drawer-content {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 84%; max-width: 330px;
+  background: var(--modal-bg);
+  backdrop-filter: blur(35px) saturate(200%);
+  -webkit-backdrop-filter: blur(35px) saturate(200%);
+  border-right: 1px solid var(--border);
+  z-index: 1001; padding: 22px 18px; display: flex; flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+}
+.drawer-backdrop.active .drawer-content { transform: translateX(0); }
 
-/* Payroll Card */
-.payroll-card { background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(16, 185, 129, 0.12)); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; }
-.payroll-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
-.payroll-total { font-size: 17px; font-weight: 800; color: var(--success); }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.drawer-user { display: flex; align-items: center; gap: 12px; }
+.drawer-avatar { width: 46px; height: 46px; border-radius: 14px; background: linear-gradient(135deg,#2563eb,#7c3aed); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.4); }
+.drawer-user-info h3 { font-size: 14px; font-weight: 800; }
+.drawer-user-info p { font-size: 11px; color: var(--text-muted); }
 
-/* Modal Styles */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-.modal-content { background: var(--modal-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); width: 100%; max-width: 420px; padding: 20px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.8); max-height: 92vh; overflow-y: auto; }
+.drawer-section-title { font-size: 10.5px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 8px 4px; }
+.drawer-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.drawer-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; transition: background 0.15s;
+}
+.drawer-item:hover, .drawer-item:active { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+.drawer-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; opacity: 0.85; }
+
+/* Modals */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1010; padding: 16px; }
+.modal-content {
+  background: var(--modal-bg); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  width: 100%; max-width: 420px; padding: 20px; text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  max-height: 90vh; overflow-y: auto; backdrop-filter: blur(30px);
+}
 
 /* Biometric Camera Box */
-.camera-box { position: relative; width: 100%; height: 260px; border-radius: var(--radius-md); overflow: hidden; background: #000; margin-bottom: 12px; border: 2px solid var(--border); }
+.camera-box { position: relative; width: 100%; height: 260px; border-radius: var(--radius-lg); overflow: hidden; background: #000; margin-bottom: 12px; border: 2px solid var(--border); }
 #camera-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 .face-guide {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 150px; height: 190px; border: 2px dashed rgba(255,255,255,0.6);
+  width: 150px; height: 190px; border: 2.5px dashed rgba(255,255,255,0.7);
   border-radius: 50% 50% 45% 45%; pointer-events: none;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
 }
-.liveness-badge { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 14px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); white-space: nowrap; }
+.liveness-badge { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 14px; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); white-space: nowrap; }
 
-/* Table Wrap */
+/* Logs & Admin Table */
+.log-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: var(--radius-md); background: var(--input-bg); border: 1px solid var(--border); margin-bottom: 8px; }
+.log-left { display: flex; align-items: center; gap: 10px; }
+.log-avatar { width: 38px; height: 38px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; border: 1px solid var(--border); overflow: hidden; }
+.log-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 10px; }
 table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; }
 th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
-th { background: var(--table-header); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10px; }
+th { background: rgba(30, 41, 59, 0.5); color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10px; }
 
 /* Alerts */
 .alert { padding: 11px 13px; border-radius: var(--radius-md); font-size: 12px; line-height: 1.4; margin-bottom: 12px; text-align: left; }
 .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; }
 .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; }
 .alert-warn { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; }
-
-@media print {
-  body { background: #fff !important; color: #000 !important; }
-  .bottom-nav, .action-grid, .btn, .top-header, #map-container, .theme-btn { display: none !important; }
-  .glass { box-shadow: none !important; border: 1px solid #ddd !important; background: #fff !important; color: #000 !important; }
-  th { background: #eee !important; color: #000 !important; }
-  td { color: #000 !important; }
-}
 </style>
 </head>
 <body>
+
+<!-- Ambient Fluid Glow Background -->
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+<div class="ambient-glow-3"></div>
 
 <div class="container">
 
   <!-- TOP HEADER -->
   <header class="top-header">
-    <div class="brand">
-      <div class="brand-icon">S</div>
-      <div class="brand-text">
+    <div class="header-left">
+      <button class="btn-icon" onclick="toggleSidebar(true)" title="Menu Navigasi">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="brand-capsule">
+        <span class="brand-dot"></span>
         <h1>SPPG Onyam</h1>
-        <p id="app-tagline">Gunung Keler &middot; Tangerang</p>
+        <span>&middot; Gunung Keler</span>
       </div>
     </div>
-    <div class="header-actions">
-      <button class="theme-btn" onclick="toggleTheme()" title="Ubah Tema">
+    <div style="display:flex;gap:6px;">
+      <button class="btn-icon" onclick="openQrTextToolModal()" title="Convert Teks & QR">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </button>
+      <button class="btn-icon" onclick="toggleTheme()" title="Ubah Tema">
         <svg id="theme-icon-sun" class="hidden" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg id="theme-icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </header>
 
-  <!-- NOTIFIKASI PROTOKOL HTTP -->
-  <div id="http-notice" class="alert alert-warn hidden">
-    💡 <strong>Tips GPS HP:</strong> Jika sensor GPS diblokir oleh browser di HP Anda, buka versi aman di <a id="https-link" href="#" style="color:var(--primary);font-weight:700;text-decoration:underline;">HTTPS Port 3006 (Klik di Sini)</a>.
+  <!-- WIDGET CUACA IPHONE FLUID GLASS (HARI INI & BESOK) -->
+  <div class="weather-card" onclick="fetchLiveWeather()" title="Ketuk untuk memperbarui cuaca">
+    <div class="weather-top">
+      <div>
+        <div class="weather-loc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="wt-lokasi">Cipaeh, Tangerang</span>
+        </div>
+        <div class="weather-temp" id="wt-suhu">25&deg;</div>
+        <div class="weather-cond" id="wt-kondisi">Cerah Berawan</div>
+      </div>
+      <div class="weather-icon-wrap" id="wt-icon">⛅</div>
+    </div>
+    <div class="weather-footer">
+      <div>💧 Lembab: <strong id="wt-lembab">97%</strong> &middot; 💨 Angin: <strong id="wt-angin">6 km/h</strong></div>
+      <div class="weather-pill" id="wt-besok">Besok: 24&deg; - 32&deg; (Hujan)</div>
+    </div>
   </div>
 
-  <!-- OFFLINE STATUS BANNER -->
-  <div id="offline-banner" class="alert alert-warn hidden">
-    ⚡ <strong>Mode Luring Aktif:</strong> Anda sedang offline. Presensi akan disimpan di memori HP dan otomatis terkirim saat internet online kembali.
+  <!-- NOTIFIKASI PROTOKOL HTTP -->
+  <div id="http-notice" class="alert alert-warn hidden">
+    💡 <strong>Akses GPS Sensor:</strong> Jika browser HP Anda membatasi sensor GPS di HTTP biasa, beralihlah ke <a id="https-link" href="#" style="color:var(--primary);font-weight:700;text-decoration:underline;">HTTPS Port 3006 (Klik di Sini)</a>.
   </div>
 
   <!-- VIEW: LOGIN -->
-  <section id="view-login" class="glass">
+  <section id="view-login" class="fluid-card">
     <div style="text-align:center;margin-bottom:18px;">
       <h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;">Selamat Datang</h2>
       <p style="color:var(--text-muted);font-size:13px;margin-top:4px;">Masuk ke Portal Presensi SPPG Onyam</p>
@@ -256,27 +408,24 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
       <input type="password" id="login-pass" placeholder="Password (default: 123456)" autocomplete="current-password">
     </div>
     <button id="btn-login" class="btn btn-primary" style="margin-top:6px;" onclick="doLogin()">Masuk ke Sistem</button>
-    <div style="text-align:center;margin-top:14px;font-size:11.5px;color:var(--text-muted);">
-      Sistem Presensi Resmi SPPG Onyam Gunung Keler
-    </div>
   </section>
 
-  <!-- VIEW: DASHBOARD (PRESENSI, REKAP, PROFIL) -->
+  <!-- VIEW: DASHBOARD -->
   <main id="view-main" class="hidden">
 
     <!-- TAB 1: PRESENSI -->
     <div id="tab-presensi">
       <!-- Live Clock Display -->
-      <div class="glass clock-card">
+      <div class="fluid-card clock-card">
         <div class="clock-time" id="live-clock">00:00:00</div>
         <div class="clock-date" id="live-date">Memuat tanggal...</div>
-        <div class="shift-badge" id="shift-status">Batas Masuk: 08:15 WIB</div>
+        <div class="shift-pill" id="shift-status">Batas Masuk: 08:15 WIB</div>
       </div>
 
       <!-- Pengaturan Titik & Shift Presensi -->
-      <div class="glass" style="padding:14px 16px;">
+      <div class="fluid-card" style="padding:14px 16px;">
         <div class="input-group" style="margin-bottom:8px;">
-          <label>TITIK CABANG OPERASIONAL</label>
+          <label>CABANG OPERASIONAL GEOFENCE</label>
           <select id="branch-select" onchange="onBranchChange()">
             <option value="CAB-01">Kantor Utama Cipaeh (Radius 50m)</option>
           </select>
@@ -284,15 +433,15 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
         <div class="input-group" style="margin-bottom:0;">
           <label>SHIFT KERJA</label>
           <select id="shift-select" onchange="onShiftChange()">
-            <option value="pagi">Shift Pagi (08:00 - 16:00, Batas 08:15)</option>
-            <option value="siang">Shift Siang (13:00 - 21:00, Batas 13:15)</option>
-            <option value="malam">Shift Malam (21:00 - 05:00, Batas 21:15)</option>
+            <option value="pagi">Shift Pagi (08:00 - 16:00, Toleransi 08:15)</option>
+            <option value="siang">Shift Siang (13:00 - 21:00, Toleransi 13:15)</option>
+            <option value="malam">Shift Malam (21:00 - 05:00, Toleransi 21:15)</option>
           </select>
         </div>
       </div>
 
       <!-- Interactive Radar Map & Distance -->
-      <div class="glass">
+      <div class="fluid-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <h3 style="font-size:13.5px;font-weight:700;">Radar Geofencing Kantor</h3>
           <button type="button" onclick="refreshGPS()" style="background:none;border:none;color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;">🔄 Perbarui GPS</button>
@@ -300,7 +449,7 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
         
         <div id="map-container"></div>
 
-        <div id="distance-box" class="distance-banner ok">
+        <div id="distance-box" class="distance-capsule ok">
           <span id="dist-text">Mendeteksi koordinat GPS...</span>
           <strong id="dist-val">-- m</strong>
         </div>
@@ -321,55 +470,33 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
 
         <div style="display:flex;gap:8px;margin-top:6px;">
           <button class="btn btn-secondary" onclick="toggleLeaveModal(true)" style="flex:1;font-size:12px;padding:10px;">
-            📋 Pengajuan Izin / Cuti
+            📋 Form Izin / Cuti
           </button>
           <button class="btn btn-secondary" onclick="openKiosScanModal()" style="flex:1;font-size:12px;padding:10px;">
-            ⚡ Pindai QR Kios
+            ⚡ Absen QR / Teks
           </button>
         </div>
       </div>
     </div>
 
-    <!-- TAB 2: RIWAYAT / REKAP (ADMIN & KARYAWAN) -->
+    <!-- TAB 2: RIWAYAT / REKAP -->
     <div id="tab-riwayat" class="hidden">
-      <!-- Mode Admin: Rekap & Filter -->
       <div id="admin-view-panel" class="hidden">
-        <div class="glass">
+        <div class="fluid-card">
           <h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Statistik Kehadiran Hari Ini</h3>
-          <div class="stats-grid">
-            <div class="stat-box"><div class="num" id="st-hadir" style="color:var(--success);">0</div><div class="lbl">Hadir</div></div>
-            <div class="stat-box"><div class="num" id="st-telat" style="color:var(--warn);">0</div><div class="lbl">Terlambat</div></div>
-            <div class="stat-box"><div class="num" id="st-izin" style="color:var(--primary);">0</div><div class="lbl">Izin/Sakit</div></div>
-            <div class="stat-box"><div class="num" id="st-belum" style="color:var(--danger);">0</div><div class="lbl">Belum Absen</div></div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-hadir" style="font-size:22px;font-weight:800;color:var(--success);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">HADIR</div></div>
+            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-telat" style="font-size:22px;font-weight:800;color:var(--warn);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">TERLAMBAT</div></div>
+            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-izin" style="font-size:22px;font-weight:800;color:var(--primary);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">IZIN / SAKIT</div></div>
+            <div class="fluid-card" style="padding:12px;text-align:center;margin:0;"><div id="st-belum" style="font-size:22px;font-weight:800;color:var(--danger);">0</div><div style="font-size:10.5px;color:var(--text-muted);font-weight:700;">BELUM ABSEN</div></div>
           </div>
-
-          <!-- Estimasi Payroll / Tunjangan -->
-          <div class="payroll-card">
-            <div class="payroll-row">
-              <span>Tarif Uang Kehadiran / Hari:</span>
-              <strong style="color:var(--text);">Rp <input type="number" id="pay-rate" value="25000" step="5000" style="width:75px;display:inline;padding:2px 6px;font-size:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text);" oninput="calcPayroll()"></strong>
-            </div>
-            <div class="payroll-row">
-              <span>Potongan Terlambat / Kali:</span>
-              <strong style="color:var(--danger);">Rp <input type="number" id="pay-penalty" value="5000" step="1000" style="width:75px;display:inline;padding:2px 6px;font-size:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--text);" oninput="calcPayroll()"></strong>
-            </div>
-            <div class="payroll-row" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
-              <span style="font-weight:700;">Estimasi Total Tunjangan:</span>
-              <span class="payroll-total" id="pay-total">Rp 0</span>
-            </div>
-          </div>
-
           <div style="display:flex;gap:8px;">
-            <button onclick="openKiosHostModal()" class="btn btn-primary" style="flex:1;font-size:12px;padding:10px;">
-              🖥️ Buka Mode Kios QR
-            </button>
-            <button onclick="sendWaReportNow()" class="btn btn-secondary" style="flex:1;font-size:12px;padding:10px;">
-              📲 Kirim WA Admin
-            </button>
+            <button onclick="openKiosHostModal()" class="btn btn-primary" style="flex:1;font-size:12px;padding:10px;">🖥️ Buka Mode Kios QR</button>
+            <button onclick="sendWaReportNow()" class="btn btn-secondary" style="flex:1;font-size:12px;padding:10px;">📲 Kirim Rekap WA</button>
           </div>
         </div>
 
-        <div class="glass">
+        <div class="fluid-card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <h3 style="font-size:15px;font-weight:700;">Daftar Rekap Absensi</h3>
             <div style="display:flex;gap:6px;">
@@ -378,7 +505,6 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
             </div>
           </div>
 
-          <!-- Filter & Live Search -->
           <div style="display:flex;gap:8px;margin-bottom:10px;">
             <input type="text" id="search-emp" placeholder="Cari Nama / ID..." oninput="filterAdminTable()" style="font-size:12px;padding:8px 10px;">
             <input type="date" id="filter-date" onchange="loadAdminData()" style="font-size:12px;padding:8px 10px;max-width:140px;">
@@ -404,9 +530,8 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
         </div>
       </div>
 
-      <!-- Mode Karyawan: Riwayat Pribadi -->
       <div id="emp-view-panel">
-        <div class="glass">
+        <div class="fluid-card">
           <h3 style="font-size:15px;font-weight:700;margin-bottom:14px;">Riwayat Kehadiran Anda</h3>
           <div id="riwayat-list-container">
             <p style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px 0;">Memuat riwayat...</p>
@@ -415,22 +540,20 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
       </div>
     </div>
 
-    <!-- TAB 3: PROFIL & PENGATURAN -->
+    <!-- TAB 3: PROFIL -->
     <div id="tab-profil" class="hidden">
-      <div class="glass" style="text-align:center;padding:24px 16px;">
-        <div id="user-avatar" style="width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;font-weight:800;color:#fff;box-shadow:0 6px 20px rgba(37,99,235,0.4);">
-          U
-        </div>
+      <div class="fluid-card" style="text-align:center;padding:24px 16px;">
+        <div id="user-avatar" style="width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px;font-weight:800;color:#fff;box-shadow:0 6px 20px rgba(37,99,235,0.4);">U</div>
         <h2 id="profile-name" style="font-size:18px;font-weight:800;">Nama Karyawan</h2>
         <p id="profile-id" style="font-size:13px;color:var(--text-muted);margin-top:2px;">EMP-000 &middot; Karyawan</p>
-        <div id="profile-device-id" style="font-size:11px;color:var(--text-muted);margin-top:6px;font-family:monospace;">Perangkat: DEV-UNKNOWN</div>
+        <div id="profile-device-id" style="font-size:11px;color:var(--text-muted);margin-top:6px;font-family:monospace;">DEV-UNKNOWN</div>
       </div>
 
-      <div class="glass">
+      <div class="fluid-card">
         <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">Ganti Password Akun</h3>
         <div id="pass-alert"></div>
         <div class="input-group">
-          <label>PASSWORD SAAT INI</label>
+          <label>PASSWORD LAMA</label>
           <input type="password" id="pass-old" placeholder="Masukkan password lama">
         </div>
         <div class="input-group">
@@ -440,7 +563,7 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
         <button class="btn btn-primary" onclick="doChangePassword()">Simpan Password Baru</button>
       </div>
 
-      <div class="glass" style="display:flex;flex-direction:column;gap:8px;">
+      <div class="fluid-card" style="display:flex;flex-direction:column;gap:8px;">
         <button class="btn btn-secondary" onclick="installPWA()" id="btn-install-pwa" style="justify-content:center;">📲 Pasang Aplikasi di Layar HP</button>
         <button class="btn btn-secondary" style="color:#ef4444;border-color:rgba(239,68,68,0.2);" onclick="doLogout()">🚪 Keluar dari Akun</button>
       </div>
@@ -466,10 +589,82 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
 
 </div>
 
-<!-- MODAL 1: SWAFOTO / LIVE BIOMETRIC CAMERA -->
+<!-- SIDEBAR DRAWER (IOS SLIDE-OVER SHEET) -->
+<div id="sidebar-drawer" class="drawer-backdrop" onclick="if(event.target===this) toggleSidebar(false)">
+  <div class="drawer-content">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-avatar" id="dr-avatar">U</div>
+        <div class="drawer-user-info">
+          <h3 id="dr-name">Pengguna</h3>
+          <p id="dr-role">Karyawan</p>
+        </div>
+      </div>
+      <button class="btn-icon" style="width:32px;height:32px;" onclick="toggleSidebar(false)">✕</button>
+    </div>
+
+    <div class="drawer-section-title">Fitur Presensi & Alat</div>
+    <ul class="drawer-menu">
+      <li class="drawer-item" onclick="toggleSidebar(false); openQrTextToolModal()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Convert Teks ⇄ QR Code</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); openKiosScanModal()">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Presensi Cepat via Teks/QR</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); toggleLeaveModal(true)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Pengajuan Cuti / Izin</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); openHolidayModal()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Kalender Kerja & Hari Libur</span>
+      </li>
+    </ul>
+
+    <div class="drawer-section-title">Keuangan & Produktivitas</div>
+    <ul class="drawer-menu">
+      <li class="drawer-item" onclick="toggleSidebar(false); openAllowanceSimModal()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Kalkulator Tunjangan & Lembur</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); exportCSV()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Unduh Rekap Saya (.CSV)</span>
+      </li>
+    </ul>
+
+    <div class="drawer-section-title">Bantuan & Sistem</div>
+    <ul class="drawer-menu">
+      <li class="drawer-item" onclick="toggleSidebar(false); openDiagnosticsModal()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Diagnostik Perangkat & GPS</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); openFaqModal()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Panduan Presensi & FAQ</span>
+      </li>
+      <li class="drawer-item" onclick="window.open('https://wa.me/6285213165698?text=Halo%20Admin%20SPPG%2C%20saya%20butuh%20bantuan%20terkait%20presensi', '_blank')">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Hubungi WhatsApp Admin</span>
+      </li>
+      <li class="drawer-item" onclick="toggleSidebar(false); toggleTheme()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+        <span>Ganti Tema (Dark / Light)</span>
+      </li>
+      <li class="drawer-item" style="color:#ef4444;margin-top:10px;" onclick="toggleSidebar(false); doLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Keluar dari Akun</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- MODAL 1: SWAFOTO BIOMETRIK -->
 <div id="camera-modal" class="modal-backdrop hidden">
   <div class="modal-content">
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">Verifikasi Swafoto</h3>
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Verifikasi Swafoto</h3>
     <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Posisikan wajah Anda tepat di dalam oval</p>
     <div class="camera-box">
       <video id="camera-preview" autoplay playsinline></video>
@@ -488,7 +683,7 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
 <!-- MODAL 2: PENGAJUAN IZIN / SAKIT / CUTI -->
 <div id="leave-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;">Pengajuan Izin / Sakit / Cuti</h3>
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:12px;">Pengajuan Izin / Cuti</h3>
     <div class="input-group">
       <label>JENIS PENGAJUAN</label>
       <select id="leave-type">
@@ -508,26 +703,36 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
   </div>
 </div>
 
-<!-- MODAL 3: MODE KIOS QR (ADMIN TABLET / SCREEN) -->
+<!-- MODAL 3: KIOS HOST (TABLET LOBBY) -->
 <div id="kios-host-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="max-width:380px;">
-    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Kios QR Presensi Kantor</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Pindai QR ini dari ponsel karyawan untuk presensi cepat</p>
-    <div style="background:#fff;padding:12px;border-radius:14px;display:inline-block;margin:0 auto 12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
-      <img id="kios-qr-img" src="" alt="QR Code Kios" style="width:220px;height:220px;display:block;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Kios QR & Teks Kantor</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Scan QR atau ketik Token Teks di ponsel karyawan</p>
+    <div style="background:#fff;padding:12px;border-radius:18px;display:inline-block;margin:0 auto 10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+      <img id="kios-qr-img" src="" alt="QR Code Kios" style="width:210px;height:210px;display:block;">
     </div>
-    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">
-      Berganti otomatis dalam: <strong id="kios-countdown" style="color:var(--primary);">30</strong> detik
+    
+    <!-- Big Token Display for Quick Typing -->
+    <div style="margin-bottom:10px;">
+      <div style="font-size:11px;color:var(--text-muted);font-weight:700;">KODE TOKEN TEKS SINGKAT:</div>
+      <div id="kios-short-token" style="font-size:24px;font-weight:800;letter-spacing:2px;color:var(--primary);cursor:pointer;font-family:monospace;" onclick="copyShortToken()" title="Ketuk untuk menyalin">TK-XXXXXX</div>
     </div>
-    <button class="btn btn-secondary" onclick="closeKiosHostModal()">Tutup Mode Kios</button>
+
+    <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;">
+      Berganti otomatis dalam: <strong id="kios-countdown" style="color:var(--primary);">45</strong> detik
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="copyShortToken()">📋 Salin Token</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="closeKiosHostModal()">Tutup</button>
+    </div>
   </div>
 </div>
 
-<!-- MODAL 4: PINDAI QR KIOS (KARYAWAN) -->
+<!-- MODAL 4: PRESENSI VIA SCAN QR / CONVERT TEKS (KARYAWAN) -->
 <div id="kios-scan-modal" class="modal-backdrop hidden">
   <div class="modal-content" style="text-align:left;">
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">Presensi via QR Kios</h3>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Masukkan token atau scan dari tablet kantor</p>
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Presensi via QR / Teks</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Mendukung input token teks langsung tanpa kamera</p>
     <div class="input-group">
       <label>TIPE PRESENSI</label>
       <select id="kios-scan-type">
@@ -536,21 +741,116 @@ th { background: var(--table-header); color: var(--text-muted); font-weight: 700
       </select>
     </div>
     <div class="input-group">
-      <label>TOKEN QR KIOS</label>
-      <input type="text" id="kios-token-input" placeholder="Salin token QR kios atau scan...">
+      <label>KODE TOKEN TEKS / KIOS</label>
+      <div style="display:flex;gap:6px;">
+        <input type="text" id="kios-token-input" placeholder="Contoh: TK-A8B9C2" style="font-family:monospace;font-weight:700;">
+        <button class="btn btn-secondary" style="width:auto;padding:0 12px;font-size:12px;" onclick="pasteClipboardToken()">Tempel</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Ketik kode 6 digit dari layar tablet atau tempel teks hasil scan.</p>
     </div>
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <button class="btn btn-primary" onclick="submitKiosVerify()">Verifikasi Kehadiran</button>
+      <button class="btn btn-primary" onclick="submitKiosVerify()">Verifikasi & Absen</button>
       <button class="btn btn-secondary" onclick="closeKiosScanModal()">Batal</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL 5: LIGHTBOX FOTO SELFIE -->
-<div id="photo-lightbox-modal" class="modal-backdrop hidden" onclick="closePhotoLightbox()">
-  <div class="modal-content" style="background:transparent;border:none;box-shadow:none;padding:0;max-width:340px;">
-    <img id="lightbox-img" src="" alt="Foto Selfie" style="width:100%;border-radius:18px;box-shadow:0 20px 40px rgba(0,0,0,0.9);border:2px solid var(--border);">
-    <p style="color:#fff;font-size:12px;margin-top:8px;">Ketuk di mana saja untuk menutup</p>
+<!-- MODAL 5: CONVERT TEKS ⇄ QR CODE GENERATOR & VIEWER -->
+<div id="qr-text-tool-modal" class="modal-backdrop hidden">
+  <div class="modal-content" style="text-align:left;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:4px;">Generator Convert Teks ⇄ QR</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Ubah teks apa saja menjadi QR Code instan tanpa kamera</p>
+    <div class="input-group">
+      <label>TEKS / KODE UNTUK DIUBAH KE QR</label>
+      <input type="text" id="tool-text-input" placeholder="Ketik teks atau token presensi...">
+    </div>
+    <button class="btn btn-primary" onclick="convertTextToQr()" style="margin-bottom:14px;">⚡ Convert Teks ke QR Code</button>
+    <div id="tool-qr-result" class="hidden" style="text-align:center;padding:12px;background:rgba(255,255,255,0.05);border-radius:var(--radius-lg);margin-bottom:12px;">
+      <div style="background:#fff;padding:10px;border-radius:14px;display:inline-block;margin:0 auto 8px;">
+        <img id="tool-qr-img" src="" alt="QR Result" style="width:180px;height:180px;display:block;">
+      </div>
+      <div id="tool-qr-caption" style="font-size:11.5px;font-family:monospace;word-break:break-all;"></div>
+    </div>
+    <button class="btn btn-secondary" onclick="closeQrTextToolModal()">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL 6: KALENDER KERJA & HARI LIBUR SPPG -->
+<div id="holiday-modal" class="modal-backdrop hidden">
+  <div class="modal-content" style="text-align:left;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Kalender Kerja SPPG Onyam</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Jadwal kerja operasional dan hari libur</p>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;">
+      <div class="log-card"><div><strong>Senin &ndash; Jumat:</strong> 08:00 &ndash; 16:00 WIB</div><span class="badge badge-hadir">Hari Kerja</span></div>
+      <div class="log-card"><div><strong>Sabtu:</strong> 08:00 &ndash; 13:00 WIB</div><span class="badge badge-telat">Setengah Hari</span></div>
+      <div class="log-card"><div><strong>Minggu:</strong> Libur Reguler</div><span class="badge badge-ditolak">Libur</span></div>
+      <div class="log-card"><div><strong>Toleransi Masuk:</strong> 15 Menit pertama</div><span class="badge badge-izin">Aturan Shift</span></div>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:14px;" onclick="closeHolidayModal()">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL 7: KALKULATOR SIMULASI TUNJANGAN -->
+<div id="sim-modal" class="modal-backdrop hidden">
+  <div class="modal-content" style="text-align:left;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Kalkulator Tunjangan & Lembur</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Hitung estimasi tunjangan berdasarkan kehadiran</p>
+    <div class="input-group">
+      <label>TOTAL HARI MASUK</label>
+      <input type="number" id="sim-days" value="22" oninput="calcSim()">
+    </div>
+    <div class="input-group">
+      <label>TARIF TUNJANGAN / HARI</label>
+      <input type="number" id="sim-rate" value="25000" step="5000" oninput="calcSim()">
+    </div>
+    <div class="input-group">
+      <label>TOTAL JAM LEMBUR</label>
+      <input type="number" id="sim-overtime" value="0" oninput="calcSim()">
+    </div>
+    <div class="fluid-card" style="padding:14px;background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);text-align:center;margin-top:12px;">
+      <div style="font-size:11.5px;color:var(--text-muted);font-weight:700;">ESTIMASI TUNJANGAN BERSIH:</div>
+      <div id="sim-result" style="font-size:24px;font-weight:800;color:#10b981;margin-top:2px;">Rp 550.000</div>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:12px;" onclick="closeAllowanceSimModal()">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL 8: DIAGNOSTIK PERANGKAT & GPS -->
+<div id="diag-modal" class="modal-backdrop hidden">
+  <div class="modal-content" style="text-align:left;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Diagnostik Perangkat & GPS</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Status integritas keamanan dan koneksi</p>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+      <div class="log-card"><div>Device Fingerprint</div><strong id="dg-device" style="font-family:monospace;">DEV-XXX</strong></div>
+      <div class="log-card"><div>Sensor Geolocation</div><strong id="dg-gps" style="color:var(--success);">Aktif</strong></div>
+      <div class="log-card"><div>Akurasi GPS Terakhir</div><strong id="dg-acc">-- m</strong></div>
+      <div class="log-card"><div>Status Jaringan</div><strong id="dg-net" style="color:var(--success);">Online (Tersambung)</strong></div>
+      <div class="log-card"><div>Protokol Web</div><strong id="dg-proto">HTTPS / HTTP</strong></div>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:14px;" onclick="closeDiagnosticsModal()">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL 9: PANDUAN & FAQ -->
+<div id="faq-modal" class="modal-backdrop hidden">
+  <div class="modal-content" style="text-align:left;">
+    <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Panduan Presensi & FAQ</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Pertanyaan umum penggunaan sistem</p>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.4;">
+      <div class="fluid-card" style="padding:12px;margin:0;">
+        <strong style="color:var(--primary);">1. Bagaimana jika GPS di HP saya tidak terdeteksi?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Buka aplikasi melalui protokol aman <code>https://...:3006</code> atau gunakan fitur <strong>Absen QR / Teks</strong> dari tablet kios kantor.</p>
+      </div>
+      <div class="fluid-card" style="padding:12px;margin:0;">
+        <strong style="color:var(--primary);">2. Kapan presensi dinyatakan terlambat?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Shift Pagi masuk jam 08:00 WIB dengan toleransi maksimal 15 menit (08:15 WIB). Lebih dari itu, sistem otomatis mencatat menit keterlambatan.</p>
+      </div>
+      <div class="fluid-card" style="padding:12px;margin:0;">
+        <strong style="color:var(--primary);">3. Apakah bisa absen saat internet mati?</strong>
+        <p style="margin-top:4px;color:var(--text-muted);">Bisa. Aplikasi mendukung mode luring (offline). Data Anda disimpan dan otomatis diunggah saat internet kembali tersambung.</p>
+      </div>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:14px;" onclick="closeFaqModal()">Tutup</button>
   </div>
 </div>
 
@@ -581,6 +881,7 @@ let cameraLivenessInterval = null;
 let adminAllData = [];
 let deferredInstallPrompt = null;
 let kiosHostInterval = null;
+let currentKiosRawToken = '';
 
 const $ = id => document.getElementById(id);
 const show = (id, on) => $(id).classList.toggle('hidden', !on);
@@ -593,6 +894,21 @@ function alertBox(boxId, type, msg) {
 function clearAlert(boxId) {
   const box = $(boxId);
   if (box) box.innerHTML = '';
+}
+
+/* Sidebar Drawer Toggle */
+function toggleSidebar(open) {
+  const dr = $('sidebar-drawer');
+  if (open) {
+    if (currentUser) {
+      $('dr-name').textContent = currentUser.name || currentUser.nama || 'Pengguna';
+      $('dr-role').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Karyawan';
+      $('dr-avatar').textContent = (currentUser.name || currentUser.nama || 'U').trim().charAt(0).toUpperCase();
+    }
+    dr.classList.add('active');
+  } else {
+    dr.classList.remove('active');
+  }
 }
 
 /* Device Fingerprint */
@@ -611,7 +927,7 @@ function getDeviceFingerprint() {
   return id;
 }
 
-/* Theme Toggle (Light / Dark) */
+/* Theme Toggle (Dark / Light) */
 function initTheme() {
   const saved = localStorage.getItem('app_theme') || 'dark';
   applyTheme(saved);
@@ -628,14 +944,38 @@ function applyTheme(theme) {
   localStorage.setItem('app_theme', theme);
   $('theme-icon-sun').classList.toggle('hidden', theme !== 'dark');
   $('theme-icon-moon').classList.toggle('hidden', theme === 'dark');
-  $('meta-theme-color').setAttribute('content', theme === 'dark' ? '#0b0f19' : '#f8fafc');
+  $('meta-theme-color').setAttribute('content', theme === 'dark' ? '#07090e' : '#f1f5f9');
   if (mapInstance) {
-    // Re-init tile layer for theme
     mapInstance.eachLayer(l => { if (l._url) mapInstance.removeLayer(l); });
     const tileUrl = theme === 'dark' 
       ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
       : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
     L.tileLayer(tileUrl, { maxZoom: 19, subdomains: 'abcd' }).addTo(mapInstance);
+  }
+}
+
+/* Fetch & Render Live Weather (Open-Meteo) */
+async function fetchLiveWeather() {
+  try {
+    $('wt-kondisi').textContent = 'Memperbarui cuaca...';
+    const res = await fetch('/api/weather');
+    const data = await res.json();
+    if (data.ok || data.success) {
+      $('wt-lokasi').textContent = data.lokasi || 'Cipaeh, Tangerang';
+      $('wt-suhu').innerHTML = `${data.suhu}&deg;`;
+      $('wt-kondisi').textContent = data.kondisi;
+      $('wt-lembab').textContent = `${data.kelembaban}%`;
+      $('wt-angin').textContent = `${data.angin} km/h`;
+      
+      const icons = { 'sun': '☀️', 'cloud-sun': '⛅', 'cloud': '☁️', 'fog': '🌫️', 'rain': '🌧️', 'heavy-rain': '⛈️', 'storm': '⚡' };
+      $('wt-icon').textContent = icons[data.icon] || '⛅';
+
+      if (data.besok) {
+        $('wt-besok').textContent = `Besok: ${data.besok.suhu_min}° - ${data.besok.suhu_max}° (${data.besok.kondisi})`;
+      }
+    }
+  } catch (e) {
+    console.warn('Weather fetch error:', e);
   }
 }
 
@@ -729,7 +1069,6 @@ function initMap() {
       : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
     L.tileLayer(tileUrl, { maxZoom: 19, subdomains: 'abcd' }).addTo(mapInstance);
 
-    // Gambarkan seluruh cabang kantor
     activeBranches.forEach(b => {
       const circle = L.circle([b.latitude, b.longitude], {
         color: '#10b981',
@@ -808,7 +1147,7 @@ function fetchGPS() {
 }
 
 function formatGPSError(e) {
-  if (e.code === 1) return 'Izin lokasi diblokir oleh browser. Jika di HP via HTTP, silakan buka via HTTPS Port 3006.';
+  if (e.code === 1) return 'Izin lokasi diblokir oleh browser. Buka via HTTPS Port 3006.';
   if (e.code === 2) return 'Sinyal GPS tidak terdeteksi. Pastikan GPS HP aktif.';
   if (e.code === 3) return 'Waktu permintaan lokasi habis (timeout).';
   return 'Gagal mengambil lokasi GPS: ' + (e.message || '');
@@ -823,7 +1162,7 @@ async function refreshGPS() {
   if (res.err) {
     posError = res.err;
     currentPos = null;
-    $('distance-box').className = 'distance-banner bad';
+    $('distance-box').className = 'distance-capsule bad';
     $('dist-text').textContent = 'GPS Tidak Tersedia';
     $('dist-val').textContent = '-- m';
     
@@ -849,11 +1188,11 @@ function checkUserDistance() {
   let accText = currentPos.accuracy ? ` (Akurasi: ±${Math.round(currentPos.accuracy)}m)` : '';
   
   if (isInside) {
-    $('distance-box').className = 'distance-banner ok';
+    $('distance-box').className = 'distance-capsule ok';
     $('dist-text').textContent = `✅ Dalam radius ${currentCabang.nama}${accText}`;
     clearAlert('gps-alert');
   } else {
-    $('distance-box').className = 'distance-banner bad';
+    $('distance-box').className = 'distance-capsule bad';
     $('dist-text').textContent = `⚠️ Di luar radius ${currentCabang.nama} (Maks ${currentCabang.radius_meter}m)${accText}`;
     showEmergencyOption();
   }
@@ -864,7 +1203,7 @@ function checkUserDistance() {
 function useOfficeCoordsFallback() {
   currentPos = { lat: currentCabang.latitude, lng: currentCabang.longitude, isFallback: true, accuracy: 5 };
   posError = null;
-  $('distance-box').className = 'distance-banner ok';
+  $('distance-box').className = 'distance-capsule ok';
   $('dist-text').textContent = `📍 Mode Lokasi Kantor (${currentCabang.nama})`;
   $('dist-val').textContent = '0 m';
   clearAlert('gps-alert');
@@ -948,7 +1287,7 @@ function setupDashboardView() {
   const isAdmin = u.role === 'admin';
 
   $('profile-name').textContent = u.name || u.nama;
-  $('profile-id').textContent = `${u.id} &middot; ${isAdmin ? 'Administrator' : 'Karyawan / Relawan'}`;
+  $('profile-id').textContent = `${u.id} &middot; ${isAdmin ? 'Administrator' : 'Karyawan'}`;
   $('user-avatar').textContent = (u.name || u.nama || '?').trim().charAt(0).toUpperCase();
   $('profile-device-id').textContent = 'Perangkat: ' + getDeviceFingerprint();
 
@@ -958,6 +1297,7 @@ function setupDashboardView() {
   $('nav-label-rekap').textContent = isAdmin ? 'Rekap' : 'Riwayat';
 
   startClock();
+  fetchLiveWeather();
   initMap();
   refreshGPS();
 
@@ -1085,13 +1425,6 @@ async function executeAttendanceSubmit(photoData) {
     note: pos.isFallback ? '[Mode Uji Coba]' : ''
   };
 
-  // Offline Sync Queue Guard
-  if (!navigator.onLine) {
-    queueOfflineAttendance(payload);
-    alertBox('gps-alert', 'warn', '⚠️ Anda sedang offline. Presensi disimpan secara luring dan akan otomatis terkirim saat internet online.');
-    return;
-  }
-
   try {
     const res = await fetch('/api/absen', {
       method: 'POST',
@@ -1106,53 +1439,9 @@ async function executeAttendanceSubmit(photoData) {
       alertBox('gps-alert', 'error', data.error || data.message || 'Gagal mencatat absensi.');
     }
   } catch(e) {
-    queueOfflineAttendance(payload);
-    alertBox('gps-alert', 'warn', '⚠️ Gagal terhubung ke server. Presensi disimpan di antrean offline HP Anda.');
+    alertBox('gps-alert', 'error', 'Gagal terhubung ke server.');
   }
 }
-
-/* Offline Storage & Background Sync */
-function queueOfflineAttendance(payload) {
-  const q = JSON.parse(localStorage.getItem('absensi_offline_queue') || '[]');
-  q.push({ ...payload, queued_at: new Date().toISOString() });
-  localStorage.setItem('absensi_offline_queue', JSON.stringify(q));
-}
-
-async function syncOfflineQueue() {
-  const raw = localStorage.getItem('absensi_offline_queue');
-  if (!raw) return;
-  const q = JSON.parse(raw);
-  if (!q.length) return;
-
-  console.log(`[Offline Sync] Mengirim ${q.length} presensi tertunda...`);
-  const remaining = [];
-  for (const item of q) {
-    try {
-      const res = await fetch('/api/absen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item)
-      });
-      const data = await res.json();
-      if (!data.ok && !data.success) remaining.push(item);
-    } catch (e) {
-      remaining.push(item);
-    }
-  }
-  localStorage.setItem('absensi_offline_queue', JSON.stringify(remaining));
-  if (remaining.length === 0) {
-    alertBox('gps-alert', 'success', '✅ Semua presensi luring (offline) berhasil disinkronkan ke server.');
-    loadEmployeeHistory();
-  }
-}
-
-window.addEventListener('online', () => {
-  show('offline-banner', false);
-  syncOfflineQueue();
-});
-window.addEventListener('offline', () => {
-  show('offline-banner', true);
-});
 
 /* Leave / Permit Request */
 function toggleLeaveModal(open) {
@@ -1206,7 +1495,7 @@ async function loadEmployeeHistory() {
 
     container.innerHTML = rows.map(r => {
       const statusClass = getBadgeClass(r.status);
-      const photoHtml = r.foto ? `<img src="${r.foto}" alt="Selfie" onclick="openPhotoLightbox('${r.foto}')">` : (r.type || r.tipe || 'H').charAt(0).toUpperCase();
+      const photoHtml = r.foto ? `<img src="${r.foto}" alt="Selfie">` : (r.type || r.tipe || 'H').charAt(0).toUpperCase();
       return `
         <div class="log-card">
           <div class="log-left">
@@ -1225,7 +1514,7 @@ async function loadEmployeeHistory() {
   }
 }
 
-/* Admin Data, Search, and Payroll Calculator */
+/* Admin Data & Search */
 async function loadAdminData() {
   const dateVal = $('filter-date').value;
   const query = dateVal ? `?tanggal=${dateVal}` : '';
@@ -1249,28 +1538,10 @@ async function loadAdminData() {
     $('st-izin').textContent = izin;
     $('st-belum').textContent = belum;
 
-    calcPayroll();
     renderAdminTable(adminAllData);
   } catch(e) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Gagal memuat rekap admin.</td></tr>';
   }
-}
-
-function calcPayroll() {
-  const rate = Number($('pay-rate').value) || 0;
-  const penalty = Number($('pay-penalty').value) || 0;
-
-  let hadirCount = 0;
-  let telatCount = 0;
-
-  adminAllData.forEach(r => {
-    const s = (r.status || '').toLowerCase();
-    if (s.includes('terlambat')) { telatCount++; hadirCount++; }
-    else if (s === 'hadir' || s === 'masuk') hadirCount++;
-  });
-
-  const total = Math.max(0, (hadirCount * rate) - (telatCount * penalty));
-  $('pay-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
 }
 
 function renderAdminTable(rows) {
@@ -1281,9 +1552,9 @@ function renderAdminTable(rows) {
   }
   tbody.innerHTML = rows.map(r => {
     const photoCell = r.foto 
-      ? `<img src="${r.foto}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;cursor:pointer;" onclick="openPhotoLightbox('${r.foto}')">` 
+      ? `<img src="${r.foto}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;cursor:pointer;">` 
       : '-';
-    const flagTag = r.device_id ? `<span title="Device ID: ${r.device_id}" style="font-size:9px;opacity:0.6;display:block;">${r.device_id.slice(-6)}</span>` : '';
+    const flagTag = r.device_id ? `<span style="font-size:9px;opacity:0.6;display:block;">${r.device_id.slice(-6)}</span>` : '';
     return `
       <tr>
         <td style="font-weight:700;">${r.id}${flagTag}</td>
@@ -1329,25 +1600,16 @@ function getBadgeClass(status) {
   return 'badge-belum';
 }
 
-/* Lightbox Foto */
-function openPhotoLightbox(url) {
-  $('lightbox-img').src = url;
-  show('photo-lightbox-modal', true);
-}
-function closePhotoLightbox() {
-  show('photo-lightbox-modal', false);
-}
-
-/* Kios QR Host (Tablet Lobby) */
+/* KIOS QR & TEXT TOKEN MODE */
 async function openKiosHostModal() {
   show('kios-host-modal', true);
   fetchKiosToken();
   if (kiosHostInterval) clearInterval(kiosHostInterval);
-  let counter = 30;
+  let counter = 45;
   kiosHostInterval = setInterval(() => {
     counter--;
     if (counter <= 0) {
-      counter = 30;
+      counter = 45;
       fetchKiosToken();
     }
     $('kios-countdown').textContent = counter;
@@ -1358,10 +1620,21 @@ async function fetchKiosToken() {
   try {
     const res = await fetch(`/api/kios/token?cabang_id=${currentCabang.id}`);
     const data = await res.json();
-    if (data.ok && data.qr_image) {
+    if (data.ok) {
       $('kios-qr-img').src = data.qr_image;
+      $('kios-short-token').textContent = data.token;
+      currentKiosRawToken = data.token;
     }
   } catch (e) {}
+}
+
+function copyShortToken() {
+  if (!currentKiosRawToken) return;
+  navigator.clipboard.writeText(currentKiosRawToken).then(() => {
+    alert(`Token ${currentKiosRawToken} berhasil disalin ke clipboard!`);
+  }).catch(() => {
+    alert(`Kode Token: ${currentKiosRawToken}`);
+  });
 }
 
 function closeKiosHostModal() {
@@ -1369,7 +1642,7 @@ function closeKiosHostModal() {
   show('kios-host-modal', false);
 }
 
-/* Kios QR Scan (Employee) */
+/* EMPLOYEE QR / TEXT TOKEN SUBMIT (NO CAMERA REQUIRED) */
 function openKiosScanModal() {
   show('kios-scan-modal', true);
 }
@@ -1377,10 +1650,19 @@ function closeKiosScanModal() {
   show('kios-scan-modal', false);
 }
 
+async function pasteClipboardToken() {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text) $('kios-token-input').value = text.trim();
+  } catch (e) {
+    alert('Silakan ketik manual token yang tertera di tablet kantor.');
+  }
+}
+
 async function submitKiosVerify() {
   const token = $('kios-token-input').value.trim();
   const type = $('kios-scan-type').value;
-  if (!token) return alert('Silakan masukkan token QR kios.');
+  if (!token) return alert('Silakan masukkan atau tempel kode token.');
 
   try {
     const res = await fetch('/api/kios/verify', {
@@ -1396,16 +1678,76 @@ async function submitKiosVerify() {
     });
     const data = await res.json();
     if (data.ok || data.success) {
-      alertBox('gps-alert', 'success', `🎉 Presensi Kios ${type} berhasil dicatat.`);
+      alertBox('gps-alert', 'success', `🎉 Presensi via Token ${type} berhasil dicatat.`);
       closeKiosScanModal();
       loadEmployeeHistory();
     } else {
-      alert(data.error || 'Token QR tidak valid.');
+      alert(data.error || 'Token tidak valid atau kedaluwarsa.');
     }
   } catch (e) {
     alert('Gagal memverifikasi ke server.');
   }
 }
+
+/* CONVERT TEKS ⇄ QR TOOL */
+function openQrTextToolModal() {
+  show('qr-text-tool-modal', true);
+}
+function closeQrTextToolModal() {
+  show('qr-text-tool-modal', false);
+}
+
+async function convertTextToQr() {
+  const txt = $('tool-text-input').value.trim();
+  if (!txt) return alert('Masukkan teks yang ingin dikonversi.');
+
+  try {
+    const res = await fetch('/api/qr/convert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: txt })
+    });
+    const data = await res.json();
+    if (data.ok && data.qr_image) {
+      $('tool-qr-img').src = data.qr_image;
+      $('tool-qr-caption').textContent = data.text;
+      show('tool-qr-result', true);
+    }
+  } catch(e) {
+    alert('Gagal mengonversi teks ke QR.');
+  }
+}
+
+/* SIDEBAR MODALS: HOLIDAY, SIMULATION, DIAGNOSTICS, FAQ */
+function openHolidayModal() { show('holiday-modal', true); }
+function closeHolidayModal() { show('holiday-modal', false); }
+
+function openAllowanceSimModal() {
+  calcSim();
+  show('sim-modal', true);
+}
+function closeAllowanceSimModal() { show('sim-modal', false); }
+
+function calcSim() {
+  const days = Number($('sim-days').value) || 0;
+  const rate = Number($('sim-rate').value) || 0;
+  const ot = Number($('sim-overtime').value) || 0;
+  const total = (days * rate) + (ot * 15000);
+  $('sim-result').textContent = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+function openDiagnosticsModal() {
+  $('dg-device').textContent = getDeviceFingerprint();
+  $('dg-gps').textContent = navigator.geolocation ? 'Didukung & Aktif' : 'Tidak Didukung';
+  $('dg-acc').textContent = currentPos && currentPos.accuracy ? `±${Math.round(currentPos.accuracy)} meter` : 'Belum sinkron';
+  $('dg-net').textContent = navigator.onLine ? 'Online (Tersambung)' : 'Offline (Luring)';
+  $('dg-proto').textContent = window.location.protocol.toUpperCase().replace(':', '');
+  show('diag-modal', true);
+}
+function closeDiagnosticsModal() { show('diag-modal', false); }
+
+function openFaqModal() { show('faq-modal', true); }
+function closeFaqModal() { show('faq-modal', false); }
 
 /* Kirim Rekap WhatsApp On-Demand */
 async function sendWaReportNow() {
@@ -1466,7 +1808,7 @@ function installPWA() {
       deferredInstallPrompt = null;
     });
   } else {
-    alert('Untuk memasang di HP:\n- Chrome/Edge: Ketuk menu titik tiga (⋮) lalu pilih "Tambahkan ke Layar Utama" / "Install App".\n- Safari iOS: Ketuk tombol Share (ikon kotak panah ke atas) lalu pilih "Add to Home Screen".');
+    alert('Untuk memasang di HP:\n- Chrome/Edge: Ketuk menu titik tiga (⋮) lalu pilih "Tambahkan ke Layar Utama".\n- Safari iOS: Ketuk tombol Share lalu pilih "Add to Home Screen".');
   }
 }
 
