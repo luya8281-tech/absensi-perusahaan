@@ -1,390 +1,266 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Absensi - SPPG Onyam Gunung Keler</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #f59e0b;
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        
-        .hidden { display: none !important; }
-        .container { width: 100%; max-width: 480px; background: var(--card); border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        /* Header */
-        .header { background: var(--primary); color: white; padding: 20px; text-align: center; }
-        .header h1 { font-size: 1.25rem; font-weight: 600; }
-        .header p { font-size: 0.875rem; opacity: 0.9; margin-top: 4px; }
-
-        /* Body Content */
-        .content { padding: 24px; }
-        
-        /* Form Elements */
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--text); }
-        .form-control { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; outline: none; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E"); background-position: right 12px center; background-repeat: no-repeat; background-size: 20px; }
-
-        /* Buttons */
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* Alerts */
-        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.875rem; display: flex; align-items: center; gap: 8px; }
-        .alert-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-        .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-        .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-
-        /* Dashboard Specifics */
-        .user-info { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-        .user-name { font-weight: 600; font-size: 1.1rem; }
-        .user-id { font-size: 0.8rem; color: var(--text-muted); background: var(--bg); padding: 4px 8px; border-radius: 4px; }
-        
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .action-card { background: var(--bg); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: transform 0.1s; border: 1px solid transparent; }
-        .action-card:active { transform: scale(0.98); }
-        .action-card.masuk { border-color: #bbf7d0; background: #f0fdf4; }
-        .action-card.pulang { border-color: #bfdbfe; background: #eff6ff; }
-        .action-card h3 { font-size: 0.9rem; margin-top: 8px; color: var(--text); }
-        .action-card .icon { font-size: 1.5rem; }
-
-        .history-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .history-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; font-size: 0.875rem; }
-        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .badge-hadir { background: #dcfce7; color: #166534; }
-        .badge-izin { background: #fef3c7; color: #92400e; }
-        .badge-sakit { background: #fee2e2; color: #991b1b; }
-        .badge-cuti { background: #e0e7ff; color: #3730a3; }
-        .badge-alpa { background: #f1f5f9; color: #475569; }
-
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 16px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .modal-header { margin-bottom: 16px; }
-        .modal-header h2 { font-size: 1.1rem; }
-        .modal-footer { margin-top: 24px; display: flex; gap: 12px; }
-        .modal-footer .btn { flex: 1; }
-
-        /* GPS Status */
-        .gps-status { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .spinner { width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi SPPG Onyam Gunung Keler</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,sans-serif}
+body{background:#f0f2f5;color:#333;min-height:100vh}
+.container{max-width:480px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+h1{font-size:1.3rem;text-align:center;color:#1a73e8;margin-bottom:16px}
+h2{font-size:1.1rem;color:#333;margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:8px}
+input[type=text],input[type=password],select,textarea{width:100%;padding:10px 12px;margin-bottom:12px;border:1px solid #ddd;border-radius:8px;font-size:0.95rem}
+button{width:100%;padding:12px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;margin-bottom:8px;transition:opacity 0.2s}
+button:disabled{opacity:0.5;cursor:not-allowed}
+.btn-primary{background:#1a73e8;color:#fff}
+.btn-success{background:#0d904f;color:#fff}
+.btn-danger{background:#d93025;color:#fff}
+.btn-warning{background:#f9ab00;color:#333}
+.btn-info{background:#5f6368;color:#fff}
+.hidden{display:none!important}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:0.8rem;font-weight:600;margin-right:6px}
+.badge-hadir{background:#e6f4ea;color:#0d904f}
+.badge-ditolak{background:#fce8e6;color:#d93025}
+.badge-izin,.badge-sakit,.badge-cuti{background:#e8f0fe;color:#1a73e8}
+.badge-alpa{background:#f1f3f4;color:#5f6368}
+.log-item{padding:10px 0;border-bottom:1px solid #f1f3f4;font-size:0.9rem}
+.log-item:last-child{border-bottom:none}
+.alert{padding:12px;border-radius:8px;margin-bottom:12px;font-size:0.9rem;text-align:center}
+.alert-error{background:#fce8e6;color:#d93025;border:1px solid #f5c6cb}
+.alert-success{background:#e6f4ea;color:#0d904f;border:1px solid #c3e6cb}
+.alert-info{background:#e8f0fe;color:#1a73e8;border:1px solid #b8daff}
+.header-info{text-align:center;margin-bottom:16px;font-size:0.95rem;color:#5f6368}
+.header-info strong{color:#333;font-size:1.1rem;display:block;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee}
+th{background:#f8f9fa;font-weight:600;color:#5f6368}
+.distance-warn{color:#d93025;font-weight:600;font-size:0.9rem;text-align:center;margin-bottom:8px}
+</style>
 </head>
 <body>
+<div class="container">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="container">
-        <div class="header">
-            <h1>Absensi Digital</h1>
-            <p>SPPG Onyam Gunung Keler</p>
-        </div>
-        <div class="content">
-            <div id="login-alert"></div>
-            <div class="form-group">
-                <label>ID Karyawan</label>
-                <input type="text" id="emp-id" class="form-control" placeholder="Contoh: EMP-001" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="emp-pass" class="form-control" placeholder="Masukkan password">
-            </div>
-            <button class="btn btn-primary" onclick="handleLogin()">Masuk</button>
-            <p style="text-align: center; margin-top: 16px; font-size: 0.8rem; color: var(--text-muted);">
-                Default password: <strong>123456</strong>
-            </p>
-        </div>
-    </div>
+<!-- LOGIN -->
+<div id="view-login" class="card">
+<h1>Absensi SPPG Onyam</h1>
+<p style="text-align:center;font-size:0.9rem;color:#5f6368;margin-bottom:16px">Gunung Keler, Kab. Tangerang</p>
+<div id="login-alert"></div>
+<input type="text" id="login-id" placeholder="ID Karyawan (cth: EMP-001)">
+<input type="password" id="login-pass" placeholder="Password">
+<button class="btn-primary" onclick="doLogin()">Masuk</button>
+</div>
 
-    <!-- DASHBOARD SCREEN -->
-    <div id="dashboard-screen" class="container hidden">
-        <div class="header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
-            <div>
-                <h1 id="dash-name" style="font-size: 1.1rem; text-align: left;">Nama Karyawan</h1>
-                <p id="dash-id" style="font-size: 0.8rem; text-align: left; margin-top: 2px;">EMP-000</p>
-            </div>
-            <button onclick="handleLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Keluar</button>
-        </div>
-        <div class="content">
-            <div id="dash-alert"></div>
-            
-            <div class="action-grid">
-                <div class="action-card masuk" onclick="openModal('masuk')">
-                    <div class="icon">🟢</div>
-                    <h3>Absen Masuk</h3>
-                </div>
-                <div class="action-card pulang" onclick="openModal('pulang')">
-                    <div class="icon">🔴</div>
-                    <h3>Absen Pulang</h3>
-                </div>
-                <div class="action-card" onclick="openModal('izin')" style="border-color: #fde68a; background: #fffbeb;">
-                    <div class="icon">📝</div>
-                    <h3>Izin / Sakit</h3>
-                </div>
-                <div class="action-card" onclick="openModal('cuti')" style="border-color: #c7d2fe; background: #eef2ff;">
-                    <div class="icon">🏖️</div>
-                    <h3>Cuti</h3>
-                </div>
-            </div>
+<!-- DASHBOARD KARYAWAN -->
+<div id="view-dashboard" class="hidden">
+<div class="card header-info">
+<strong id="dash-nama"></strong>
+<span id="dash-id"></span> &bull; <span id="dash-role"></span>
+</div>
 
-            <div class="history-title">Riwayat Kehadiran</div>
-            <div class="history-list" id="history-list">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-    </div>
+<div class="card">
+<h2>Absensi Hari Ini</h2>
+<div id="absen-alert"></div>
+<div id="distance-info" class="distance-warn hidden"></div>
+<button class="btn-success" id="btn-masuk" onclick="doAbsen('masuk')">Absen Masuk</button>
+<button class="btn-warning" id="btn-pulang" onclick="doAbsen('pulang')">Absen Pulang</button>
+</div>
 
-    <!-- MODAL ABSENSI -->
-    <div id="modal-absensi" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Konfirmasi Absensi</h2>
-            </div>
-            <div id="modal-body">
-                <div class="form-group hidden" id="alasan-group">
-                    <label>Keterangan Tambahan</label>
-                    <textarea id="alasan-text" class="form-control" rows="3" placeholder="Jelaskan alasan..."></textarea>
-                </div>
-                <div class="gps-status" id="gps-status">
-                    <div class="spinner"></div> Memverifikasi lokasi (Radius maks 50m)...
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
-                <button class="btn btn-primary" id="btn-submit-absensi" onclick="submitAbsensi()" disabled>Kirim</button>
-            </div>
-        </div>
-    </div>
+<div class="card">
+<h2>Pengajuan Izin / Sakit / Cuti</h2>
+<select id="tipe-izin">
+<option value="izin">Izin</option>
+<option value="sakit">Sakit</option>
+<option value="cuti">Cuti</option>
+</select>
+<textarea id="ket-izin" rows="3" placeholder="Keterangan tambahan..."></textarea>
+<button class="btn-info" onclick="doAbsen('pengajuan')">Kirim Pengajuan</button>
+</div>
 
-    <script>
-        // Konfigurasi Lokasi Kantor (Gunung Keler, Tangerang)
-        const OFFICE_LAT = -6.1754; 
-        const OFFICE_LNG = 106.4522;
-        const MAX_RADIUS_METERS = 50;
+<div class="card">
+<h2>Riwayat Kehadiran</h2>
+<div id="riwayat-list"><p style="color:#999;font-size:0.9rem">Memuat data...</p></div>
+</div>
 
-        let currentUser = null;
-        let currentActionType = '';
-        let isLocationValid = false;
+<button class="btn-danger" onclick="doLogout()" style="margin-top:8px">Keluar</button>
+</div>
 
-        // Data Dummy Karyawan (Akan diganti dengan fetch API nanti)
-        const employees = [
-            { id: "EMP-001", name: "Daman Huri", pass: "123456" },
-            { id: "EMP-002", name: "Nanang Wahyudin", pass: "123456" },
-            { id: "EMP-045", name: "Karinah", pass: "123456" },
-            { id: "EMP-049", name: "Kamsin", pass: "123456" }
-            // Sisanya akan di-load dari database via API
-        ];
+<!-- DASHBOARD ADMIN -->
+<div id="view-admin" class="hidden">
+<div class="card header-info">
+<strong id="admin-nama"></strong>
+<span>Panel Admin</span>
+</div>
+<div class="card">
+<h2>Rekap Seluruh Karyawan</h2>
+<div style="overflow-x:auto">
+<table id="rekap-table">
+<thead><tr><th>ID</th><th>Nama</th><th>Tanggal</th><th>Waktu</th><th>Status</th><th>Jarak</th></tr></thead>
+<tbody id="rekap-body"><tr><td colspan="6">Memuat...</td></tr></tbody>
+</table>
+</div>
+</div>
+<button class="btn-danger" onclick="doLogout()">Keluar</button>
+</div>
 
-        // History Dummy
-        let historyData = JSON.parse(localStorage.getItem('absensi_history') || '[]');
+</div>
 
-        function showAlert(elementId, message, type) {
-            const el = document.getElementById(elementId);
-            el.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => el.innerHTML = '', 5000);
-        }
+<script>
+const OFFICE_LAT = -6.1754;
+const OFFICE_LNG = 106.4522;
+const MAX_RADIUS = 50;
+let currentUser = null;
+let currentDistance = null;
 
-        function handleLogin() {
-            const idInput = document.getElementById('emp-id').value.trim().toUpperCase();
-            const passInput = document.getElementById('emp-pass').value;
+function showView(id) {
+  document.querySelectorAll('.container > div').forEach(v => v.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 
-            if (!idInput || !passInput) {
-                showAlert('login-alert', 'ID dan Password wajib diisi.', 'error');
-                return;
-            }
+function showAlert(elId, msg, type) {
+  const el = document.getElementById(elId);
+  el.innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
+  setTimeout(() => el.innerHTML = '', 5000);
+}
 
-            // Simulasi Login (Nanti ganti ke POST /api/login)
-            // Untuk demo, kita accept ID format EMP-XXX dengan pass 123456
-            if (passInput === '123456' && idInput.startsWith('EMP-')) {
-                // Cari nama atau gunakan default
-                const emp = employees.find(e => e.id === idInput);
-                currentUser = {
-                    id: idInput,
-                    name: emp ? emp.name : `Karyawan ${idInput.replace('EMP-', '')}`
-                };
-                
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('dashboard-screen').classList.remove('hidden');
-                
-                document.getElementById('dash-name').innerText = currentUser.name;
-                document.getElementById('dash-id').innerText = currentUser.id;
-                
-                renderHistory();
-            } else {
-                showAlert('login-alert', 'ID Karyawan atau Password salah.', 'error');
-            }
-        }
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
 
-        function handleLogout() {
-            currentUser = null;
-            document.getElementById('dashboard-screen').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('emp-id').value = '';
-            document.getElementById('emp-pass').value = '';
-        }
+async function doLogin() {
+  const id = document.getElementById('login-id').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!id || !pass) return showAlert('login-alert','ID dan Password wajib diisi.','error');
+  try {
+    const res = await fetch('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pass})});
+    const data = await res.json();
+    if (data.success) {
+      currentUser = data.data;
+      localStorage.setItem('absensi_user', JSON.stringify(currentUser));
+      initDashboard();
+    } else {
+      showAlert('login-alert', data.message, 'error');
+    }
+  } catch(e) { showAlert('login-alert','Gagal terhubung ke server.','error'); }
+}
 
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // Radius bumi dalam meter
-            const p1 = lat1 * Math.PI / 180;
-            const p2 = lat2 * Math.PI / 180;
-            const deltaP = (lat2 - lat1) * Math.PI / 180;
-            const deltaL = (lon2 - lon1) * Math.PI / 180;
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('absensi_user');
+  document.getElementById('login-id').value = '';
+  document.getElementById('login-pass').value = '';
+  showView('view-login');
+}
 
-            const a = Math.sin(deltaP / 2) * Math.sin(deltaP / 2) +
-                      Math.cos(p1) * Math.cos(p2) *
-                      Math.sin(deltaL / 2) * Math.sin(deltaL / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Jarak dalam meter
-        }
+function initDashboard() {
+  if (!currentUser) return;
+  if (currentUser.role === 'admin') {
+    document.getElementById('admin-nama').textContent = currentUser.nama + ' (' + currentUser.id + ')';
+    showView('view-admin');
+    loadRekap();
+  } else {
+    document.getElementById('dash-nama').textContent = currentUser.nama;
+    document.getElementById('dash-id').textContent = currentUser.id;
+    document.getElementById('dash-role').textContent = currentUser.role;
+    showView('view-dashboard');
+    loadRiwayat();
+    getLocation();
+  }
+}
 
-        function openModal(type) {
-            currentActionType = type;
-            isLocationValid = false;
-            
-            const modal = document.getElementById('modal-absensi');
-            const title = document.getElementById('modal-title');
-            const alasanGroup = document.getElementById('alasan-group');
-            const gpsStatus = document.getElementById('gps-status');
-            const btnSubmit = document.getElementById('btn-submit-absensi');
-            
-            modal.classList.remove('hidden');
-            alasanGroup.classList.add('hidden');
-            btnSubmit.disabled = true;
-            
-            const titles = {
-                'masuk': 'Absen Masuk',
-                'pulang': 'Absen Pulang',
-                'izin': 'Pengajuan Izin/Sakit',
-                'cuti': 'Pengajuan Cuti'
-            };
-            title.innerText = titles[type];
+function getLocation() {
+  const distEl = document.getElementById('distance-info');
+  if (!navigator.geolocation) { distEl.textContent = 'Browser tidak mendukung GPS.'; distEl.classList.remove('hidden'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    currentDistance = haversine(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
+    distEl.textContent = 'Jarak Anda dari kantor: ' + currentDistance.toFixed(1) + ' meter (Maks: ' + MAX_RADIUS + 'm)';
+    distEl.classList.remove('hidden');
+    if (currentDistance > MAX_RADIUS) {
+      document.getElementById('btn-masuk').disabled = true;
+      document.getElementById('btn-pulang').disabled = true;
+      distEl.style.color = '#d93025';
+    } else {
+      document.getElementById('btn-masuk').disabled = false;
+      document.getElementById('btn-pulang').disabled = false;
+      distEl.style.color = '#0d904f';
+    }
+  }, () => {
+    distEl.textContent = 'Akses lokasi ditolak. Absensi GPS tidak tersedia.';
+    distEl.classList.remove('hidden');
+    distEl.style.color = '#d93025';
+    document.getElementById('btn-masuk').disabled = true;
+    document.getElementById('btn-pulang').disabled = true;
+  });
+}
 
-            if (type === 'izin' || type === 'cuti') {
-                alasanGroup.classList.remove('hidden');
-                gpsStatus.innerHTML = '<span style="color:var(--warning)">⚠️ Tidak memerlukan validasi lokasi GPS</span>';
-                isLocationValid = true;
-                btnSubmit.disabled = false;
-            } else {
-                gpsStatus.innerHTML = '<div class="spinner"></div> Mengambil lokasi GPS...';
-                checkGeofencing();
-            }
-        }
+async function doAbsen(tipe) {
+  if (!currentUser) return;
+  let payload = { karyawan_id: currentUser.id, tipe: tipe };
+  if (tipe === 'masuk' || tipe === 'pulang') {
+    if (currentDistance === null) return showAlert('absen-alert','Menunggu sinyal GPS...','error');
+    payload.jarak_meter = currentDistance;
+  } else if (tipe === 'pengajuan') {
+    payload.tipe = document.getElementById('tipe-izin').value;
+    payload.keterangan = document.getElementById('ket-izin').value;
+  }
+  try {
+    const res = await fetch('/api/absensi', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data = await res.json();
+    if (data.success) {
+      showAlert('absen-alert', data.message, 'success');
+      if (tipe === 'pengajuan') document.getElementById('ket-izin').value = '';
+      loadRiwayat();
+    } else {
+      showAlert('absen-alert', 'Gagal mencatat absensi.', 'error');
+    }
+  } catch(e) { showAlert('absen-alert','Error koneksi server.','error'); }
+}
 
-        function closeModal() {
-            document.getElementById('modal-absensi').classList.add('hidden');
-        }
+async function loadRiwayat() {
+  if (!currentUser) return;
+  try {
+    const res = await fetch('/api/admin/rekap');
+    const all = await res.json();
+    const mine = all.filter(r => r.karyawan_id === currentUser.id && r.tanggal);
+    const el = document.getElementById('riwayat-list');
+    if (mine.length === 0) { el.innerHTML = '<p style="color:#999;font-size:0.9rem">Belum ada riwayat.</p>'; return; }
+    el.innerHTML = mine.slice(0,20).map(r => {
+      let bc = 'alpa';
+      if (r.status === 'Hadir') bc = 'hadir';
+      else if (r.status.includes('Ditolak')) bc = 'ditolak';
+      else if (['izin','sakit','cuti'].includes(r.tipe)) bc = r.tipe;
+      return '<div class="log-item"><span class="badge badge-'+bc+'">'+r.status.toUpperCase()+'</span> '+r.tanggal+' '+r.waktu+' - '+r.tipe.charAt(0).toUpperCase()+r.tipe.slice(1)+(r.jarak_meter ? ' ('+r.jarak_meter.toFixed(0)+'m)' : '')+(r.keterangan ? '<br><small style="color:#666">'+r.keterangan+'</small>' : '')+'</div>';
+    }).join('');
+  } catch(e) {}
+}
 
-        function checkGeofencing() {
-            if (!navigator.geolocation) {
-                document.getElementById('gps-status').innerHTML = '<span style="color:var(--danger)">Browser tidak mendukung GPS.</span>';
-                return;
-            }
+async function loadRekap() {
+  try {
+    const res = await fetch('/api/admin/rekap');
+    const data = await res.json();
+    const tbody = document.getElementById('rekap-body');
+    const filtered = data.filter(r => r.tanggal);
+    if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="6">Belum ada data absensi.</td></tr>'; return; }
+    tbody.innerHTML = filtered.slice(0,100).map(r => {
+      let bc = 'alpa';
+      if (r.status === 'Hadir') bc = 'hadir';
+      else if (r.status && r.status.includes('Ditolak')) bc = 'ditolak';
+      else if (['izin','sakit','cuti'].includes(r.tipe)) bc = r.tipe;
+      return '<tr><td>'+r.id+'</td><td>'+r.nama+'</td><td>'+(r.tanggal||'-')+'</td><td>'+(r.waktu||'-')+'</td><td><span class="badge badge-'+bc+'">'+(r.status||'-')+'</span></td><td>'+(r.jarak_meter ? r.jarak_meter.toFixed(0)+'m' : '-')+'</td></tr>';
+    }).join('');
+  } catch(e) {}
+}
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    const distance = calculateDistance(userLat, userLng, OFFICE_LAT, OFFICE_LNG);
-                    
-                    const gpsStatus = document.getElementById('gps-status');
-                    const btnSubmit = document.getElementById('btn-submit-absensi');
-
-                    if (distance <= MAX_RADIUS_METERS) {
-                        gpsStatus.innerHTML = `<span style="color:var(--success)">✓ Lokasi valid (${Math.round(distance)}m dari kantor)</span>`;
-                        isLocationValid = true;
-                        btnSubmit.disabled = false;
-                    } else {
-                        gpsStatus.innerHTML = `<span style="color:var(--danger)">✗ Anda berada di luar radius (${Math.round(distance)}m). Maks 50m.</span>`;
-                        isLocationValid = false;
-                        btnSubmit.disabled = true;
-                    }
-                },
-                (error) => {
-                    document.getElementById('gps-status').innerHTML = `<span style="color:var(--danger)">Gagal mendapatkan lokasi. Pastikan GPS aktif.</span>`;
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        }
-
-        function submitAbsensi() {
-            if (currentActionType === 'izin' || currentActionType === 'cuti') {
-                const alasan = document.getElementById('alasan-text').value;
-                if (!alasan) {
-                    alert('Mohon isi keterangan tambahan.');
-                    return;
-                }
-            }
-
-            // Simpan ke local history (sementara sebelum API backend siap)
-            const now = new Date();
-            const record = {
-                date: now.toLocaleDateString('id-ID'),
-                time: now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}),
-                type: currentActionType.charAt(0).toUpperCase() + currentActionType.slice(1),
-                status: currentActionType === 'masuk' || currentActionType === 'pulang' ? 'Hadir' : currentActionType.charAt(0).toUpperCase() + currentActionType.slice(1)
-            };
-
-            historyData.unshift(record);
-            localStorage.setItem('absensi_history', JSON.stringify(historyData));
-
-            closeModal();
-            renderHistory();
-            showAlert('dash-alert', `Berhasil mencatat ${record.type}.`, 'success');
-            document.getElementById('alasan-text').value = '';
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            if (historyData.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.9rem; padding:20px;">Belum ada riwayat absensi.</div>';
-                return;
-            }
-
-            list.innerHTML = historyData.slice(0, 10).map(item => {
-                let badgeClass = 'badge-hadir';
-                if (item.status === 'Izin') badgeClass = 'badge-izin';
-                if (item.status === 'Sakit') badgeClass = 'badge-sakit';
-                if (item.status === 'Cuti') badgeClass = 'badge-cuti';
-                if (item.status === 'Alpa') badgeClass = 'badge-alpa';
-
-                return `
-                    <div class="history-item">
-                        <div>
-                            <div style="font-weight:600;">${item.date} • ${item.time}</div>
-                            <div style="font-size:0.8rem; color:var(--text-muted);">${item.type}</div>
-                        </div>
-                        <span class="status-badge ${badgeClass}">${item.status}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Enter key support for login
-        document.getElementById('emp-pass').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') handleLogin();
-        });
-        document.getElementById('emp-id').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') document.getElementById('emp-pass').focus();
-        });
-    </script>
+window.onload = () => {
+  const saved = localStorage.getItem('absensi_user');
+  if (saved) { currentUser = JSON.parse(saved); initDashboard(); }
+  else showView('view-login');
+};
+</script>
 </body>
 </html>

@@ -1,1 +1,7 @@
-node_modules/\n.env\n*.log\ndist/
+node_modules/
+.env
+*.log
+dist/
+absensi.db
+absensi.db-shm
+absensi.db-wal
