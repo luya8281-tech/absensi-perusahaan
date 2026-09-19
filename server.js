@@ -3,12 +3,15 @@ const Database = require("better-sqlite3");
 const bodyParser = require("body-parser");
 const path = require("path");
 const https = require("https");
+const http = require("http");
 const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3005;
+const HTTPS_PORT = process.env.HTTPS_PORT || 3006;
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public"), {
   etag: false,
   lastModified: false,
@@ -22,8 +25,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS karyawan (
     id TEXT PRIMARY KEY,
     nama TEXT NOT NULL,
-    password TEXT NOT NULL DEFAULT "123456",
-    role TEXT NOT NULL DEFAULT "karyawan"
+    password TEXT NOT NULL DEFAULT '123456',
+    role TEXT NOT NULL DEFAULT 'karyawan'
   );
   CREATE TABLE IF NOT EXISTS absensi (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,63 +74,102 @@ if (countStmt.get().total === 0) {
   insertMany(seedData);
 }
 
+// 1. LOGIN API (mendukung user dan data untuk kompatibilitas penuh)
 app.post("/api/login", (req, res) => {
-  const { id, password } = req.body;
+  const { id, password } = req.body || {};
   if (!id || !password) {
     return res.status(400).json({ success: false, message: "ID dan Password wajib diisi." });
   }
   const normalizedId = String(id).toUpperCase().trim();
   const user = db.prepare("SELECT * FROM karyawan WHERE id = ?").get(normalizedId);
-  if (user && user.password === password) {
-    res.json({ success: true, user: { id: user.id, nama: user.nama, role: user.role } });
+  if (user && String(user.password) === String(password).trim()) {
+    const userData = { id: user.id, nama: user.nama, role: user.role };
+    res.json({ success: true, user: userData, data: userData });
   } else {
     res.status(401).json({ success: false, message: "ID atau Password salah." });
   }
 });
 
-app.post("/api/absen", (req, res) => {
-  const { karyawan_id, tipe, status, latitude, longitude, jarak_meter, keterangan } = req.body;
-  if (!karyawan_id || !tipe || !status) {
-    return res.status(400).json({ success: false, message: "Data absensi tidak lengkap." });
+// 2. ABSENSI API (mendukung /api/absen dan /api/absensi)
+const handleAbsen = (req, res) => {
+  const { karyawan_id, tipe, latitude, longitude, keterangan } = req.body || {};
+  let status = req.body ? req.body.status : null;
+  let jarak_meter = req.body ? req.body.jarak_meter : null;
+
+  if (!karyawan_id || !tipe) {
+    return res.status(400).json({ success: false, message: "Data absensi tidak lengkap (karyawan_id dan tipe wajib)." });
   }
+
+  if (!status) {
+    if (tipe === "izin" || tipe === "sakit" || tipe === "cuti") {
+      status = tipe.charAt(0).toUpperCase() + tipe.slice(1);
+    } else if (jarak_meter !== undefined && jarak_meter !== null) {
+      status = Number(jarak_meter) <= 50 ? "Hadir" : `Ditolak (Jarak ${Math.round(jarak_meter)}m)`;
+    } else {
+      status = "Hadir";
+    }
+  }
+
   const now = new Date();
   const tanggal = now.toISOString().split("T")[0];
-  const waktu = now.toTimeString().split(" ")[0];
+  const waktu = now.toTimeString().split(" ")[0].substring(0, 8);
+
   db.prepare(`
     INSERT INTO absensi (karyawan_id, tanggal, waktu, tipe, status, latitude, longitude, jarak_meter, keterangan)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(karyawan_id, tanggal, waktu, tipe, status, latitude || null, longitude || null, jarak_meter || null, keterangan || null);
-  res.json({ success: true, message: "Absensi berhasil dicatat." });
-});
 
+  res.json({ success: true, message: "Absensi berhasil dicatat.", status, data: { karyawan_id, tanggal, waktu, tipe, status, jarak_meter } });
+};
+
+app.post("/api/absen", handleAbsen);
+app.post("/api/absensi", handleAbsen);
+
+// 3. RIWAYAT PER KARYAWAN
 app.get("/api/riwayat/:karyawan_id", (req, res) => {
   const { karyawan_id } = req.params;
   const rows = db.prepare("SELECT * FROM absensi WHERE karyawan_id = ? ORDER BY tanggal DESC, waktu DESC").all(karyawan_id);
   res.json({ success: true, data: rows });
 });
 
-app.get("/api/rekap", (req, res) => {
-  const today = new Date().toISOString().split("T")[0];
+// 4. REKAP SELURUH KARYAWAN (mengembalikan array agar kompatibel dengan .map() dan .filter())
+const handleRekap = (req, res) => {
   const rows = db.prepare(`
-    SELECT k.id, k.nama, a.status, a.waktu, a.keterangan
+    SELECT k.id, k.nama, a.tanggal, a.waktu, a.tipe, a.status, a.jarak_meter, a.keterangan
     FROM karyawan k
-    LEFT JOIN absensi a ON k.id = a.karyawan_id AND a.tanggal = ?
-    ORDER BY k.id
-  `).all(today);
-  res.json({ success: true, data: rows });
+    LEFT JOIN absensi a ON k.id = a.karyawan_id
+    ORDER BY a.tanggal DESC, a.waktu DESC
+  `).all();
+  res.json(rows);
+};
+
+app.get("/api/rekap", handleRekap);
+app.get("/api/admin/rekap", handleRekap);
+
+// 5. LIST KARYAWAN
+app.get("/api/karyawan", (req, res) => {
+  const rows = db.prepare("SELECT id, nama, role FROM karyawan ORDER BY id ASC").all();
+  res.json(rows);
 });
 
+// 6. JALANKAN SERVER HTTP (PORT 3005)
+http.createServer(app).listen(PORT, "0.0.0.0", () => {
+  console.log(`Server Absensi HTTP berjalan di http://0.0.0.0:${PORT}`);
+});
+
+// 7. JALANKAN SERVER HTTPS (PORT 3006) JIKA SERTIFIKAT TERSEDIA
 try {
-  const privateKey = fs.readFileSync(path.join(__dirname, "key.pem"), "utf8");
-  const certificate = fs.readFileSync(path.join(__dirname, "cert.pem"), "utf8");
-  const credentials = { key: privateKey, cert: certificate };
-  const httpsServer = https.createServer(credentials, app);
-  httpsServer.listen(PORT, () => {
-    console.log(`Server Absensi berjalan di https://localhost:${PORT}`);
-  });
+  const keyPath = path.join(__dirname, "key.pem");
+  const certPath = path.join(__dirname, "cert.pem");
+  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    const credentials = {
+      key: fs.readFileSync(keyPath, "utf8"),
+      cert: fs.readFileSync(certPath, "utf8")
+    };
+    https.createServer(credentials, app).listen(HTTPS_PORT, "0.0.0.0", () => {
+      console.log(`Server Absensi HTTPS berjalan di https://0.0.0.0:${HTTPS_PORT}`);
+    });
+  }
 } catch (err) {
-  console.error("Gagal memuat sertifikat SSL:", err.message);
-  app.listen(PORT, () => {
-    console.log(`Server Absensi berjalan di http://localhost:${PORT} (Fallback)`);
-  });
+  console.error("Gagal menjalankan server HTTPS:", err.message);
 }

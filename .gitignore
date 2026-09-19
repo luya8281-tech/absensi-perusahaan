@@ -5,3 +5,4 @@ dist/
 absensi.db
 absensi.db-shm
 absensi.db-wal
+*.pem

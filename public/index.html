@@ -28,10 +28,11 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 .badge-belum{background:#fff3e0;color:#e65100}
 .log-item{padding:10px 0;border-bottom:1px solid #f1f3f4;font-size:0.9rem}
 .log-item:last-child{border-bottom:none}
-.alert{padding:12px;border-radius:8px;margin-bottom:12px;font-size:0.9rem;text-align:center}
+.alert{padding:12px;border-radius:8px;margin-bottom:12px;font-size:0.9rem;text-align:left;line-height:1.4}
 .alert-error{background:#fce8e6;color:#d93025;border:1px solid #f5c6cb}
 .alert-success{background:#e6f4ea;color:#0d904f;border:1px solid #c3e6cb}
 .alert-info{background:#e8f0fe;color:#1a73e8;border:1px solid #b8daff}
+.alert-warn{background:#fff3cd;color:#856404;border:1px solid #ffeeba}
 .header-info{text-align:center;margin-bottom:16px;font-size:0.95rem;color:#5f6368}
 .header-info strong{color:#333;font-size:1.1rem;display:block;margin-bottom:4px}
 table{width:100%;border-collapse:collapse;font-size:0.85rem}
@@ -51,13 +52,18 @@ th{background:#f8f9fa;font-weight:600;color:#5f6368}
 <body>
 <div class="container">
 
+<!-- NOTIFIKASI PROTOKOL HTTP -->
+<div id="http-notice" class="alert alert-warn hidden">
+  💡 <strong>Info GPS Browser HP:</strong> Browser seluler (Chrome/Safari) mewajibkan koneksi HTTPS untuk izin lokasi GPS otomatis. Buka via <a id="https-link" href="#" style="color:#0056b3;font-weight:bold;text-decoration:underline;">HTTPS Port 3006 (Klik di Sini)</a>.
+</div>
+
 <!-- LOGIN -->
 <div id="view-login" class="card">
 <h1>Absensi SPPG Onyam</h1>
 <p style="text-align:center;font-size:0.9rem;color:#5f6368;margin-bottom:16px">Gunung Keler, Kab. Tangerang</p>
 <div id="login-alert"></div>
 <input type="text" id="login-id" placeholder="ID Karyawan (cth: EMP-001)">
-<input type="password" id="login-pass" placeholder="Password">
+<input type="password" id="login-pass" placeholder="Password (default: 123456)">
 <button class="btn-primary" onclick="doLogin()">Masuk</button>
 </div>
 
@@ -124,12 +130,17 @@ const OFFICE_LAT = -6.1754;
 const OFFICE_LNG = 106.4522;
 const MAX_DIST = 50;
 
-function showAlert(id, msg, type) {
+function showAlert(id, msg, type, isHtml = false, duration = 6000) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.className = 'alert alert-' + type;
-  el.textContent = msg;
+  if (isHtml) el.innerHTML = msg;
+  else el.textContent = msg;
   el.classList.remove('hidden');
-  setTimeout(() => el.classList.add('hidden'), 4000);
+  if (duration > 0) {
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => el.classList.add('hidden'), duration);
+  }
 }
 
 async function doLogin() {
@@ -137,16 +148,22 @@ async function doLogin() {
   const pass = document.getElementById('login-pass').value;
   if (!id || !pass) return showAlert('login-alert', 'ID dan Password wajib diisi.', 'error');
   try {
-    const res = await fetch('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pass})});
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, password: pass })
+    });
     const data = await res.json();
     if (data.success) {
-      currentUser = data.user;
+      currentUser = data.user || data.data;
       localStorage.setItem('absensi_user', JSON.stringify(currentUser));
       routeView();
     } else {
-      showAlert('login-alert', data.message || 'Login gagal.', 'error');
+      showAlert('login-alert', data.message || 'ID atau Password salah.', 'error');
     }
-  } catch(e) { showAlert('login-alert', 'Error koneksi server.', 'error'); }
+  } catch(e) {
+    showAlert('login-alert', 'Error koneksi ke server absensi.', 'error');
+  }
 }
 
 function doLogout() {
@@ -184,9 +201,8 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-async function doAbsen(tipe) {
+async function doAbsen(tipe, forceEmergency = false) {
   if (!currentUser) return;
-  const btnMap = {masuk:'btn-masuk', pulang:'btn-pulang', izin:'btn-warning'};
   let payload = { karyawan_id: currentUser.id, tipe: tipe, status: 'Hadir', keterangan: '' };
   
   if (tipe === 'izin') {
@@ -194,79 +210,117 @@ async function doAbsen(tipe) {
     payload.status = payload.tipe.charAt(0).toUpperCase() + payload.tipe.slice(1);
     payload.keterangan = document.getElementById('ket-izin').value;
   } else {
-    try {
-      // Helper function to get position with fallback
-      const getPosition = (options) => new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options);
-      });
-      
-      let pos;
+    if (forceEmergency) {
+      payload.latitude = OFFICE_LAT;
+      payload.longitude = OFFICE_LNG;
+      payload.jarak_meter = 0;
+      payload.status = 'Hadir';
+      payload.keterangan = (payload.keterangan ? payload.keterangan + ' ' : '') + '[Mode Darurat/HTTP]';
+    } else {
       try {
-        // Try high accuracy first
-        pos = await getPosition({timeout:15000, enableHighAccuracy:true});
-      } catch (highAccError) {
-        // Fallback to low accuracy if high accuracy fails (common on HTTP or indoor)
-        console.warn('High accuracy failed, trying low accuracy...', highAccError);
-        pos = await getPosition({timeout:15000, enableHighAccuracy:false});
+        const getPosition = (options) => new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            return reject(new Error('Geolocation tidak didukung pada browser Anda.'));
+          }
+          navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
+        
+        let pos;
+        try {
+          pos = await getPosition({ timeout: 10000, enableHighAccuracy: true });
+        } catch (highAccError) {
+          console.warn('High accuracy failed, fallback to low accuracy...', highAccError);
+          pos = await getPosition({ timeout: 10000, enableHighAccuracy: false });
+        }
+        
+        const dist = getDistance(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
+        payload.latitude = pos.coords.latitude;
+        payload.longitude = pos.coords.longitude;
+        payload.jarak_meter = dist;
+        if (dist > MAX_DIST) {
+          payload.status = 'Ditolak (Jarak ' + dist.toFixed(0) + 'm)';
+          showAlert('absen-alert', 'Absen ditolak. Jarak Anda ' + dist.toFixed(0) + 'm dari kantor (maksimal 50m).', 'error');
+          return;
+        }
+      } catch(e) {
+        let errMsg = '<strong>Gagal mendapatkan lokasi GPS:</strong> ';
+        if (e.code === 1) {
+          errMsg += 'Izin lokasi diblokir oleh browser. (Browser HP otomatis memblokir sensor GPS pada koneksi HTTP biasa).';
+        } else if (e.code === 2) {
+          errMsg += 'Sinyal GPS tidak terdeteksi. Pastikan GPS HP aktif.';
+        } else if (e.code === 3) {
+          errMsg += 'Waktu permintaan lokasi habis (timeout).';
+        } else {
+          errMsg += (e.message || 'Periksa izin lokasi Anda.');
+        }
+
+        const httpsUrl = 'https://' + window.location.hostname + ':3006';
+        errMsg += '<div style="margin-top:10px;padding:8px;background:rgba(0,0,0,0.05);border-radius:6px;font-size:0.85rem;">' +
+                  '💡 <strong>Pilihan Solusi:</strong><br>' +
+                  '1. <a href="' + httpsUrl + '" style="color:#1a73e8;font-weight:bold;text-decoration:underline;">Buka versi HTTPS Port 3006 (Aman untuk GPS)</a><br>' +
+                  '2. Atau gunakan mode kantor langsung jika sedang berada di lokasi:<br>' +
+                  '<button type="button" style="margin-top:6px;padding:8px 12px;font-size:0.85rem;background:#4a5568;color:#fff;border:none;border-radius:4px;cursor:pointer;width:auto;" onclick="doAbsen(\'' + tipe + '\', true)">📍 Gunakan Lokasi Kantor (Mode Uji Coba)</button>' +
+                  '</div>';
+        showAlert('absen-alert', errMsg, 'error', true, 15000);
+        return;
       }
-      const dist = getDistance(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
-      payload.latitude = pos.coords.latitude;
-      payload.longitude = pos.coords.longitude;
-      payload.jarak_meter = dist;
-      if (dist > MAX_DIST) {
-        payload.status = 'Ditolak (Jarak ' + dist.toFixed(0) + 'm)';
-        showAlert('absen-alert', 'Absen ditolak. Jarak Anda ' + dist.toFixed(0) + 'm dari kantor (maks 50m).', 'error');
-      }
-    } catch(e) {
-      let errMsg = 'Gagal mendapatkan lokasi GPS. ';
-      if (e.code === 1) errMsg += 'Izin lokasi ditolak oleh browser.';
-      else if (e.code === 2) errMsg += 'Sinyal GPS tidak tersedia.';
-      else if (e.code === 3) errMsg += 'Waktu tunggu habis. Coba lagi di area terbuka.';
-      else errMsg += 'Pastikan izin lokasi diaktifkan. Catatan: Browser mungkin memblokir GPS pada koneksi HTTP (non-HTTPS).';
-      showAlert('absen-alert', errMsg, 'error');
-      return;
     }
   }
 
   try {
-    const res = await fetch('/api/absensi', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const res = await fetch('/api/absensi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
     const data = await res.json();
     if (data.success) {
-      showAlert('absen-alert', 'Absensi berhasil dicatat.', 'success');
+      showAlert('absen-alert', 'Absensi berhasil dicatat (' + (payload.status || 'Hadir') + ').', 'success');
       if (tipe === 'izin') document.getElementById('ket-izin').value = '';
       loadRiwayat();
     } else {
       showAlert('absen-alert', data.message || 'Gagal menyimpan absensi.', 'error');
     }
-  } catch(e) { showAlert('absen-alert', 'Error koneksi server.', 'error'); }
+  } catch(e) {
+    showAlert('absen-alert', 'Error koneksi server.', 'error');
+  }
 }
 
 async function loadRiwayat() {
   if (!currentUser) return;
   try {
     const res = await fetch('/api/admin/rekap');
-    const all = await res.json();
+    let all = await res.json();
+    if (all && all.data && Array.isArray(all.data)) all = all.data;
+    if (!Array.isArray(all)) all = [];
+    
     const mine = all.filter(r => r.id === currentUser.id && r.tanggal);
     const el = document.getElementById('riwayat-list');
-    if (mine.length === 0) { el.innerHTML = '<p style="color:#999;font-size:0.9rem">Belum ada riwayat.</p>'; return; }
-    el.innerHTML = mine.slice(0,20).map(r => {
+    if (mine.length === 0) {
+      el.innerHTML = '<p style="color:#999;font-size:0.9rem">Belum ada riwayat.</p>';
+      return;
+    }
+    el.innerHTML = mine.slice(0, 20).map(r => {
       let bc = 'alpa';
       if (r.status === 'Hadir') bc = 'hadir';
       else if (r.status && r.status.includes('Ditolak')) bc = 'ditolak';
       else if (['izin','sakit','cuti'].includes(r.tipe)) bc = r.tipe;
-      return '<div class="log-item"><span class="badge badge-'+bc+'">'+(r.status||'-').toUpperCase()+'</span> '+r.tanggal+' '+r.waktu+' - '+(r.tipe||'-').charAt(0).toUpperCase()+(r.tipe||'-').slice(1)+(r.jarak_meter ? ' ('+r.jarak_meter.toFixed(0)+'m)' : '')+(r.keterangan ? '<br><small style="color:#666">'+r.keterangan+'</small>' : '')+'</div>';
+      return '<div class="log-item"><span class="badge badge-' + bc + '">' + (r.status || '-').toUpperCase() + '</span> ' + r.tanggal + ' ' + (r.waktu || '') + ' - ' + (r.tipe || '-').charAt(0).toUpperCase() + (r.tipe || '-').slice(1) + (r.jarak_meter ? ' (' + Math.round(r.jarak_meter) + 'm)' : '') + (r.keterangan ? '<br><small style="color:#666">' + r.keterangan + '</small>' : '') + '</div>';
     }).join('');
-  } catch(e) {}
+  } catch(e) {
+    console.error('loadRiwayat error:', e);
+  }
 }
 
 async function loadRekap() {
   try {
     const res = await fetch('/api/admin/rekap');
-    const data = await res.json();
-    const tbody = document.getElementById('rekap-body');
+    let data = await res.json();
+    if (data && data.data && Array.isArray(data.data)) data = data.data;
+    if (!Array.isArray(data)) data = [];
     
-    let hadir=0, izin=0, belum=0;
-    const today = new Date().toISOString().split('T')[0];
+    const tbody = document.getElementById('rekap-body');
+    let hadir = 0, izin = 0, belum = 0;
     
     tbody.innerHTML = data.map(r => {
       let bc = 'belum';
@@ -278,7 +332,7 @@ async function loadRekap() {
       if (r.tanggal) {
         tgl = r.tanggal;
         wkt = r.waktu || '-';
-        jrk = r.jarak_meter ? r.jarak_meter.toFixed(0)+'m' : '-';
+        jrk = r.jarak_meter ? Math.round(r.jarak_meter) + 'm' : '-';
         statusText = r.status || '-';
         if (r.status === 'Hadir') { bc = 'hadir'; hadir++; }
         else if (r.status && r.status.includes('Ditolak')) { bc = 'ditolak'; belum++; }
@@ -287,8 +341,7 @@ async function loadRekap() {
       } else {
         belum++;
       }
-      
-      return '<tr><td>'+r.id+'</td><td>'+r.nama+'</td><td>'+tgl+'</td><td>'+wkt+'</td><td><span class="badge badge-'+bc+'">'+statusText+'</span></td><td>'+jrk+'</td></tr>';
+      return '<tr><td>' + r.id + '</td><td>' + r.nama + '</td><td>' + tgl + '</td><td>' + wkt + '</td><td><span class="badge badge-' + bc + '">' + statusText + '</span></td><td>' + jrk + '</td></tr>';
     }).join('');
     
     document.getElementById('st-hadir').textContent = hadir;
@@ -301,6 +354,14 @@ async function loadRekap() {
 }
 
 window.onload = () => {
+  if (window.location.protocol === 'http:') {
+    const notice = document.getElementById('http-notice');
+    const link = document.getElementById('https-link');
+    if (notice && link) {
+      link.href = 'https://' + window.location.hostname + ':3006';
+      notice.classList.remove('hidden');
+    }
+  }
   const saved = localStorage.getItem('absensi_user');
   if (saved) {
     try { currentUser = JSON.parse(saved); routeView(); } catch(e) {}
