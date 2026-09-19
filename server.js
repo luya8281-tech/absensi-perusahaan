@@ -71,11 +71,12 @@ if (countStmt.get().total === 0) {
 }
 
 app.post('/api/login', (req, res) => {
-  const { id, password } = req.body;
+  const { id, password, employee_id } = req.body;
+  const loginId = (id || employee_id || "").toString().trim();
   const stmt = db.prepare('SELECT * FROM karyawan WHERE id = ? AND password = ?');
-  const user = stmt.get(id.toUpperCase(), password);
+  const user = stmt.get(loginId.toUpperCase(), password);
   if (user) {
-    res.json({ success: true, data: { id: user.id, nama: user.nama, role: user.role } });
+    res.json({ success: true, user: { id: user.id, nama: user.nama, role: user.role } });
   } else {
     res.status(401).json({ success: false, message: 'ID atau Password salah.' });
   }
