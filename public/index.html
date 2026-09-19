@@ -25,6 +25,7 @@ button:disabled{opacity:0.5;cursor:not-allowed}
 .badge-ditolak{background:#fce8e6;color:#d93025}
 .badge-izin,.badge-sakit,.badge-cuti{background:#e8f0fe;color:#1a73e8}
 .badge-alpa{background:#f1f3f4;color:#5f6368}
+.badge-belum{background:#fff3e0;color:#e65100}
 .log-item{padding:10px 0;border-bottom:1px solid #f1f3f4;font-size:0.9rem}
 .log-item:last-child{border-bottom:none}
 .alert{padding:12px;border-radius:8px;margin-bottom:12px;font-size:0.9rem;text-align:center}
@@ -37,6 +38,14 @@ table{width:100%;border-collapse:collapse;font-size:0.85rem}
 th,td{padding:8px 6px;text-align:left;border-bottom:1px solid #eee}
 th{background:#f8f9fa;font-weight:600;color:#5f6368}
 .distance-warn{color:#d93025;font-weight:600;font-size:0.9rem;text-align:center;margin-bottom:8px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:#f8f9fa;border-radius:8px;padding:12px;text-align:center;border-left:4px solid #ccc}
+.stat-card.hadir{border-left-color:#0d904f}
+.stat-card.izin{border-left-color:#1a73e8}
+.stat-card.sakit{border-left-color:#f9ab00}
+.stat-card.alpa{border-left-color:#d93025}
+.stat-num{font-size:1.4rem;font-weight:700;color:#333}
+.stat-label{font-size:0.75rem;color:#666;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -55,170 +64,165 @@ th{background:#f8f9fa;font-weight:600;color:#5f6368}
 <!-- DASHBOARD KARYAWAN -->
 <div id="view-dashboard" class="hidden">
 <div class="card header-info">
-<strong id="dash-nama"></strong>
-<span id="dash-id"></span> &bull; <span id="dash-role"></span>
+<strong id="dash-nama">Nama Karyawan</strong>
+<span id="dash-id">EMP-000</span>
 </div>
-
 <div class="card">
 <h2>Absensi Hari Ini</h2>
 <div id="absen-alert"></div>
 <div id="distance-info" class="distance-warn hidden"></div>
 <button class="btn-success" id="btn-masuk" onclick="doAbsen('masuk')">Absen Masuk</button>
-<button class="btn-warning" id="btn-pulang" onclick="doAbsen('pulang')">Absen Pulang</button>
-</div>
-
-<div class="card">
+<button class="btn-danger" id="btn-pulang" onclick="doAbsen('pulang')">Absen Pulang</button>
+<hr style="margin:16px 0;border:none;border-top:1px solid #eee">
 <h2>Pengajuan Izin / Sakit / Cuti</h2>
 <select id="tipe-izin">
 <option value="izin">Izin</option>
 <option value="sakit">Sakit</option>
 <option value="cuti">Cuti</option>
 </select>
-<textarea id="ket-izin" rows="3" placeholder="Keterangan tambahan..."></textarea>
-<button class="btn-info" onclick="doAbsen('pengajuan')">Kirim Pengajuan</button>
+<textarea id="ket-izin" rows="2" placeholder="Keterangan (opsional)"></textarea>
+<button class="btn-warning" onclick="doAbsen('izin')">Kirim Pengajuan</button>
 </div>
-
 <div class="card">
 <h2>Riwayat Kehadiran</h2>
-<div id="riwayat-list"><p style="color:#999;font-size:0.9rem">Memuat data...</p></div>
+<div id="riwayat-list"><p style="color:#999;font-size:0.9rem">Memuat...</p></div>
 </div>
-
-<button class="btn-danger" onclick="doLogout()" style="margin-top:8px">Keluar</button>
+<button class="btn-info" onclick="doLogout()">Keluar</button>
 </div>
 
 <!-- DASHBOARD ADMIN -->
 <div id="view-admin" class="hidden">
 <div class="card header-info">
-<strong id="admin-nama"></strong>
+<strong id="admin-nama">Nama Admin</strong>
 <span>Panel Admin</span>
+</div>
+<div class="card">
+<h2>Statistik Hari Ini</h2>
+<div class="stats-grid">
+<div class="stat-card hadir"><div class="stat-num" id="st-hadir">0</div><div class="stat-label">Hadir</div></div>
+<div class="stat-card izin"><div class="stat-num" id="st-izin">0</div><div class="stat-label">Izin/Sakit/Cuti</div></div>
+<div class="stat-card alpa"><div class="stat-num" id="st-alpa">0</div><div class="stat-label">Belum Absen</div></div>
+<div class="stat-card"><div class="stat-num" id="st-total">49</div><div class="stat-label">Total Karyawan</div></div>
+</div>
 </div>
 <div class="card">
 <h2>Rekap Seluruh Karyawan</h2>
 <div style="overflow-x:auto">
-<table id="rekap-table">
+<table>
 <thead><tr><th>ID</th><th>Nama</th><th>Tanggal</th><th>Waktu</th><th>Status</th><th>Jarak</th></tr></thead>
-<tbody id="rekap-body"><tr><td colspan="6">Memuat...</td></tr></tbody>
+<tbody id="rekap-body"><tr><td colspan="6">Memuat data...</td></tr></tbody>
 </table>
 </div>
 </div>
-<button class="btn-danger" onclick="doLogout()">Keluar</button>
+<button class="btn-info" onclick="doLogout()">Keluar</button>
 </div>
 
 </div>
-
 <script>
+let currentUser = null;
 const OFFICE_LAT = -6.1754;
 const OFFICE_LNG = 106.4522;
-const MAX_RADIUS = 50;
-let currentUser = null;
-let currentDistance = null;
+const MAX_DIST = 50;
 
-function showView(id) {
-  document.querySelectorAll('.container > div').forEach(v => v.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
-function showAlert(elId, msg, type) {
-  const el = document.getElementById(elId);
-  el.innerHTML = '<div class="alert alert-' + type + '">' + msg + '</div>';
-  setTimeout(() => el.innerHTML = '', 5000);
-}
-
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.className = 'alert alert-' + type;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 4000);
 }
 
 async function doLogin() {
-  const id = document.getElementById('login-id').value.trim();
+  const id = document.getElementById('login-id').value.trim().toUpperCase();
   const pass = document.getElementById('login-pass').value;
-  if (!id || !pass) return showAlert('login-alert','ID dan Password wajib diisi.','error');
+  if (!id || !pass) return showAlert('login-alert', 'ID dan Password wajib diisi.', 'error');
   try {
     const res = await fetch('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pass})});
     const data = await res.json();
     if (data.success) {
-      currentUser = data.data;
+      currentUser = data.user;
       localStorage.setItem('absensi_user', JSON.stringify(currentUser));
-      initDashboard();
+      routeView();
     } else {
-      showAlert('login-alert', data.message, 'error');
+      showAlert('login-alert', data.message || 'Login gagal.', 'error');
     }
-  } catch(e) { showAlert('login-alert','Gagal terhubung ke server.','error'); }
+  } catch(e) { showAlert('login-alert', 'Error koneksi server.', 'error'); }
 }
 
 function doLogout() {
   currentUser = null;
   localStorage.removeItem('absensi_user');
-  document.getElementById('login-id').value = '';
-  document.getElementById('login-pass').value = '';
-  showView('view-login');
+  routeView();
 }
 
-function initDashboard() {
-  if (!currentUser) return;
+function routeView() {
+  document.getElementById('view-login').classList.add('hidden');
+  document.getElementById('view-dashboard').classList.add('hidden');
+  document.getElementById('view-admin').classList.add('hidden');
+  if (!currentUser) {
+    document.getElementById('view-login').classList.remove('hidden');
+    return;
+  }
   if (currentUser.role === 'admin') {
     document.getElementById('admin-nama').textContent = currentUser.nama + ' (' + currentUser.id + ')';
-    showView('view-admin');
+    document.getElementById('view-admin').classList.remove('hidden');
     loadRekap();
   } else {
     document.getElementById('dash-nama').textContent = currentUser.nama;
     document.getElementById('dash-id').textContent = currentUser.id;
-    document.getElementById('dash-role').textContent = currentUser.role;
-    showView('view-dashboard');
+    document.getElementById('view-dashboard').classList.remove('hidden');
     loadRiwayat();
-    getLocation();
   }
 }
 
-function getLocation() {
-  const distEl = document.getElementById('distance-info');
-  if (!navigator.geolocation) { distEl.textContent = 'Browser tidak mendukung GPS.'; distEl.classList.remove('hidden'); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    currentDistance = haversine(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
-    distEl.textContent = 'Jarak Anda dari kantor: ' + currentDistance.toFixed(1) + ' meter (Maks: ' + MAX_RADIUS + 'm)';
-    distEl.classList.remove('hidden');
-    if (currentDistance > MAX_RADIUS) {
-      document.getElementById('btn-masuk').disabled = true;
-      document.getElementById('btn-pulang').disabled = true;
-      distEl.style.color = '#d93025';
-    } else {
-      document.getElementById('btn-masuk').disabled = false;
-      document.getElementById('btn-pulang').disabled = false;
-      distEl.style.color = '#0d904f';
-    }
-  }, () => {
-    distEl.textContent = 'Akses lokasi ditolak. Absensi GPS tidak tersedia.';
-    distEl.classList.remove('hidden');
-    distEl.style.color = '#d93025';
-    document.getElementById('btn-masuk').disabled = true;
-    document.getElementById('btn-pulang').disabled = true;
-  });
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
 async function doAbsen(tipe) {
   if (!currentUser) return;
-  let payload = { karyawan_id: currentUser.id, tipe: tipe };
-  if (tipe === 'masuk' || tipe === 'pulang') {
-    if (currentDistance === null) return showAlert('absen-alert','Menunggu sinyal GPS...','error');
-    payload.jarak_meter = currentDistance;
-  } else if (tipe === 'pengajuan') {
+  const btnMap = {masuk:'btn-masuk', pulang:'btn-pulang', izin:'btn-warning'};
+  let payload = { karyawan_id: currentUser.id, tipe: tipe, status: 'Hadir', keterangan: '' };
+  
+  if (tipe === 'izin') {
     payload.tipe = document.getElementById('tipe-izin').value;
+    payload.status = payload.tipe.charAt(0).toUpperCase() + payload.tipe.slice(1);
     payload.keterangan = document.getElementById('ket-izin').value;
+  } else {
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {timeout:10000, enableHighAccuracy:true});
+      });
+      const dist = getDistance(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
+      payload.latitude = pos.coords.latitude;
+      payload.longitude = pos.coords.longitude;
+      payload.jarak_meter = dist;
+      if (dist > MAX_DIST) {
+        payload.status = 'Ditolak (Jarak ' + dist.toFixed(0) + 'm)';
+        showAlert('absen-alert', 'Absen ditolak. Jarak Anda ' + dist.toFixed(0) + 'm dari kantor (maks 50m).', 'error');
+      }
+    } catch(e) {
+      showAlert('absen-alert', 'Gagal mendapatkan lokasi GPS. Pastikan izin lokasi diaktifkan.', 'error');
+      return;
+    }
   }
+
   try {
     const res = await fetch('/api/absensi', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const data = await res.json();
     if (data.success) {
-      showAlert('absen-alert', data.message, 'success');
-      if (tipe === 'pengajuan') document.getElementById('ket-izin').value = '';
+      showAlert('absen-alert', 'Absensi berhasil dicatat.', 'success');
+      if (tipe === 'izin') document.getElementById('ket-izin').value = '';
       loadRiwayat();
     } else {
-      showAlert('absen-alert', 'Gagal mencatat absensi.', 'error');
+      showAlert('absen-alert', data.message || 'Gagal menyimpan absensi.', 'error');
     }
-  } catch(e) { showAlert('absen-alert','Error koneksi server.','error'); }
+  } catch(e) { showAlert('absen-alert', 'Error koneksi server.', 'error'); }
 }
 
 async function loadRiwayat() {
@@ -226,15 +230,15 @@ async function loadRiwayat() {
   try {
     const res = await fetch('/api/admin/rekap');
     const all = await res.json();
-    const mine = all.filter(r => r.karyawan_id === currentUser.id && r.tanggal);
+    const mine = all.filter(r => r.id === currentUser.id && r.tanggal);
     const el = document.getElementById('riwayat-list');
     if (mine.length === 0) { el.innerHTML = '<p style="color:#999;font-size:0.9rem">Belum ada riwayat.</p>'; return; }
     el.innerHTML = mine.slice(0,20).map(r => {
       let bc = 'alpa';
       if (r.status === 'Hadir') bc = 'hadir';
-      else if (r.status.includes('Ditolak')) bc = 'ditolak';
+      else if (r.status && r.status.includes('Ditolak')) bc = 'ditolak';
       else if (['izin','sakit','cuti'].includes(r.tipe)) bc = r.tipe;
-      return '<div class="log-item"><span class="badge badge-'+bc+'">'+r.status.toUpperCase()+'</span> '+r.tanggal+' '+r.waktu+' - '+r.tipe.charAt(0).toUpperCase()+r.tipe.slice(1)+(r.jarak_meter ? ' ('+r.jarak_meter.toFixed(0)+'m)' : '')+(r.keterangan ? '<br><small style="color:#666">'+r.keterangan+'</small>' : '')+'</div>';
+      return '<div class="log-item"><span class="badge badge-'+bc+'">'+(r.status||'-').toUpperCase()+'</span> '+r.tanggal+' '+r.waktu+' - '+(r.tipe||'-').charAt(0).toUpperCase()+(r.tipe||'-').slice(1)+(r.jarak_meter ? ' ('+r.jarak_meter.toFixed(0)+'m)' : '')+(r.keterangan ? '<br><small style="color:#666">'+r.keterangan+'</small>' : '')+'</div>';
     }).join('');
   } catch(e) {}
 }
@@ -244,22 +248,47 @@ async function loadRekap() {
     const res = await fetch('/api/admin/rekap');
     const data = await res.json();
     const tbody = document.getElementById('rekap-body');
-    const filtered = data.filter(r => r.tanggal);
-    if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="6">Belum ada data absensi.</td></tr>'; return; }
-    tbody.innerHTML = filtered.slice(0,100).map(r => {
-      let bc = 'alpa';
-      if (r.status === 'Hadir') bc = 'hadir';
-      else if (r.status && r.status.includes('Ditolak')) bc = 'ditolak';
-      else if (['izin','sakit','cuti'].includes(r.tipe)) bc = r.tipe;
-      return '<tr><td>'+r.id+'</td><td>'+r.nama+'</td><td>'+(r.tanggal||'-')+'</td><td>'+(r.waktu||'-')+'</td><td><span class="badge badge-'+bc+'">'+(r.status||'-')+'</span></td><td>'+(r.jarak_meter ? r.jarak_meter.toFixed(0)+'m' : '-')+'</td></tr>';
+    
+    let hadir=0, izin=0, belum=0;
+    const today = new Date().toISOString().split('T')[0];
+    
+    tbody.innerHTML = data.map(r => {
+      let bc = 'belum';
+      let statusText = 'Belum Absen';
+      let tgl = '-';
+      let wkt = '-';
+      let jrk = '-';
+      
+      if (r.tanggal) {
+        tgl = r.tanggal;
+        wkt = r.waktu || '-';
+        jrk = r.jarak_meter ? r.jarak_meter.toFixed(0)+'m' : '-';
+        statusText = r.status || '-';
+        if (r.status === 'Hadir') { bc = 'hadir'; hadir++; }
+        else if (r.status && r.status.includes('Ditolak')) { bc = 'ditolak'; belum++; }
+        else if (['izin','sakit','cuti'].includes(r.tipe)) { bc = r.tipe; izin++; }
+        else { bc = 'alpa'; belum++; }
+      } else {
+        belum++;
+      }
+      
+      return '<tr><td>'+r.id+'</td><td>'+r.nama+'</td><td>'+tgl+'</td><td>'+wkt+'</td><td><span class="badge badge-'+bc+'">'+statusText+'</span></td><td>'+jrk+'</td></tr>';
     }).join('');
-  } catch(e) {}
+    
+    document.getElementById('st-hadir').textContent = hadir;
+    document.getElementById('st-izin').textContent = izin;
+    document.getElementById('st-alpa').textContent = belum;
+    document.getElementById('st-total').textContent = data.length;
+  } catch(e) {
+    document.getElementById('rekap-body').innerHTML = '<tr><td colspan="6">Gagal memuat data.</td></tr>';
+  }
 }
 
 window.onload = () => {
   const saved = localStorage.getItem('absensi_user');
-  if (saved) { currentUser = JSON.parse(saved); initDashboard(); }
-  else showView('view-login');
+  if (saved) {
+    try { currentUser = JSON.parse(saved); routeView(); } catch(e) {}
+  }
 };
 </script>
 </body>
