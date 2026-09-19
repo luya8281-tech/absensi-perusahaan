@@ -522,60 +522,61 @@ app.get("/api/riwayat/:karyawan_id", handleRiwayat);
 app.get("/api/riwayat", handleRiwayat);
 
 // 8. REKAP SELURUH KARYAWAN (Admin)
-const handleRekap = (req, res) => {
-  const filterDate = req.query.tanggal || null;
-  const filterStatus = req.query.status || null;
+function handleRekap(req, res) {
+    try {
+        // Tentukan tanggal filter: dari query atau hari ini (WIB)
+        let tanggalFilter = req.query.tanggal;
+        if (!tanggalFilter) {
+            // Hitung tanggal hari ini dalam zona waktu Asia/Jakarta
+            const now = new Date();
+            const wibOffset = 7 * 60 * 60 * 1000; // WIB is UTC+7
+            const wibTime = new Date(now.getTime() + wibOffset);
+            tanggalFilter = wibTime.toISOString().split('T')[0];
+        }
 
-  let query = `
-    SELECT k.id, k.nama, a.id as absensi_id, a.tanggal, a.waktu, a.tipe, a.status, a.jarak_meter, a.keterangan, a.foto, a.cabang_id, a.shift_id, a.device_id, a.accuracy, a.is_mock, c.nama as cabang_nama
-    FROM karyawan k
-    LEFT JOIN absensi a ON k.id = a.karyawan_id
-  `;
-  const params = [];
+        const employees = db.prepare('SELECT id, nama FROM karyawan ORDER BY id').all();
+        
+        const result = employees.map(emp => {
+            // Ambil record absensi terakhir untuk tanggal tersebut
+            const record = db.prepare('SELECT * FROM absensi WHERE karyawan_id = ? AND tanggal = ? ORDER BY id DESC LIMIT 1').get(emp.id, tanggalFilter);
+            
+            let status = 'Belum Absen';
+            let waktuDisplay = '-';
+            let tipe = '-';
 
-  if (filterDate) {
-    query += " AND a.tanggal = ? ";
-    params.push(filterDate);
-  } else {
-    query += " AND a.tanggal = date('now', 'localtime') ";
-  }
+            if (record) {
+                status = record.status; 
+                tipe = record.tipe;
+                // Format waktu ke HH:MM WIB
+                try {
+                    const d = new Date(record.waktu);
+                    // Pastikan formatasi menggunakan locale Indonesia dan timezone Jakarta
+                    waktuDisplay = d.toLocaleTimeString('id-ID', { 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        timeZone: 'Asia/Jakarta' 
+                    }) + ' WIB';
+                } catch(e) {
+                    waktuDisplay = record.waktu;
+                }
+            }
 
-  query += " LEFT JOIN cabang c ON a.cabang_id = c.id ORDER BY k.id ASC";
-
-  let rows = db.prepare(query).all(...params).map(r => ({
-    id: r.id,
-    nama: r.nama,
-    name: r.nama,
-    tanggal: r.tanggal,
-    date: r.tanggal,
-    waktu: r.waktu,
-    time: r.waktu,
-    tipe: r.tipe,
-    type: r.tipe,
-    status: r.status || "Belum Absen",
-    jarak_meter: r.jarak_meter,
-    distance: r.jarak_meter,
-    keterangan: r.keterangan,
-    note: r.keterangan,
-    foto: r.foto,
-    cabang_id: r.cabang_id,
-    cabang_nama: r.cabang_nama || "-",
-    shift_id: r.shift_id || "pagi",
-    device_id: r.device_id,
-    accuracy: r.accuracy,
-    is_mock: r.is_mock
-  }));
-
-  if (filterStatus && filterStatus !== "all") {
-    rows = rows.filter(r => r.status.toLowerCase().includes(filterStatus.toLowerCase()));
-  }
-
-  if (req.query.format === "array") {
-    return res.json(rows);
-  }
-
-  res.json({ ok: true, success: true, data: rows });
-};
+            return { 
+                id: emp.id, 
+                nama: emp.nama, 
+                status: status, 
+                waktu: waktuDisplay,
+                tipe: tipe,
+                tanggal: tanggalFilter
+            };
+        });
+        
+        res.json({ success: true, data: result, tanggal: tanggalFilter });
+    } catch (err) {
+        console.error('Error di handleRekap:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
+}
 
 app.get("/api/rekap", handleRekap);
 app.get("/api/admin/rekap", handleRekap);
