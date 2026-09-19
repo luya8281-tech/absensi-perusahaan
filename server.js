@@ -7,7 +7,12 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => res.set('Cache-Control', 'no-store')
+}));
 
 const db = new Database(path.join(__dirname, 'absensi.db'));
 db.pragma('journal_mode = WAL');
