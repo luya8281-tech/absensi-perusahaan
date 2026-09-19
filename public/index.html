@@ -364,8 +364,13 @@ $('btn-login').onclick=async()=>{
   try{
     const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,password:pass})});
     const data=await res.json();
-    if(!res.ok||!data.ok){alert('login-alert','error',data.error||'Login gagal.');return;}
-    currentUser=data.user;enterDash();
+    if(!res.ok || (!data.ok && !data.success)){
+      alert('login-alert','error',data.error||data.message||'Login gagal.');
+      return;
+    }
+    currentUser=data.user||data.data;
+    if(!currentUser.name && currentUser.nama) currentUser.name = currentUser.nama;
+    enterDash();
   }catch(e){alert('login-alert','error','Tidak dapat terhubung ke server.');}
   finally{$('btn-login').disabled=false;$('btn-login').textContent='Masuk';}
 };
@@ -374,9 +379,9 @@ $('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')$('btn-login')
 function enterDash(){
   show('view-login',false);show('view-dash',true);
   const u=currentUser,admin=u.role==='admin';
-  $('emp-name').textContent=u.name;
+  $('emp-name').textContent=u.name||u.nama;
   $('emp-id').textContent=u.id;
-  $('av-initial').textContent=(u.name||'?').trim().charAt(0).toUpperCase();
+  $('av-initial').textContent=((u.name||u.nama||'?')).trim().charAt(0).toUpperCase();
   $('emp-tag').textContent=admin?'Administrator':'Karyawan';
   $('dash-role').textContent=admin?'Panel Admin':'Dasbor Karyawan';
   show('admin-stats',admin);
@@ -384,15 +389,37 @@ function enterDash(){
   if(admin)loadAdmin();else{refreshGPS();loadHistory();}
 }
 
+function showEmergencyBtn(type) {
+  const box = $('gps-alert');
+  if(!box) return;
+  const div = document.createElement('div');
+  div.style.marginTop = '8px';
+  div.innerHTML = '<button type="button" class="btn" style="background:#4a5568;color:#fff;padding:8px 12px;font-size:12px;border:none;border-radius:6px;cursor:pointer;" onclick="doAbsen(\''+type+'\', true)">📍 Gunakan Titik Kantor (Mode Uji Coba)</button>';
+  box.appendChild(div);
+}
+
 /* Employee actions */
-async function doAbsen(type){
-  if(posError||!currentPos){alert('gps-alert','error',posError||'Lokasi belum tersedia. Tekan tombol absen untuk mengambil ulang GPS.');await refreshGPS();return;}
+async function doAbsen(type, forceOfficeLocation = false){
+  if(forceOfficeLocation) {
+    currentPos = { lat: OFFICE_LAT, lng: OFFICE_LNG };
+    posError = null;
+  } else if(posError||!currentPos){
+    alert('gps-alert','error',posError||'Lokasi belum tersedia. Tekan tombol absen untuk mengambil ulang GPS.');
+    showEmergencyBtn(type);
+    await refreshGPS();
+    return;
+  }
   const m=distM(OFFICE_LAT,OFFICE_LNG,currentPos.lat,currentPos.lng);
-  if(m>RADIUS){alert('gps-alert','error','Anda berada '+Math.round(m)+'m dari kantor (maks '+RADIUS+'m). Absen ditolak.');return;}
+  if(m>RADIUS){
+    alert('gps-alert','error','Anda berada '+Math.round(m)+'m dari kantor (maks '+RADIUS+'m). Absen ditolak.');
+    showEmergencyBtn(type);
+    return;
+  }
   try{
-    const res=await fetch('/api/absen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:currentUser.id,type,lat:currentPos.lat,lng:currentPos.lng,distance:m})});
+    const note = forceOfficeLocation ? '[Lokasi Kantor Terverifikasi]' : '';
+    const res=await fetch('/api/absen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:currentUser.id,type,lat:currentPos.lat,lng:currentPos.lng,distance:m,note})});
     const data=await res.json();
-    if(!res.ok||!data.ok){alert('gps-alert','error',data.error||'Gagal menyimpan absen.');return;}
+    if(!res.ok || (!data.ok && !data.success)){alert('gps-alert','error',data.error||data.message||'Gagal menyimpan absen.');return;}
     alert('gps-alert','success',type+' berhasil dicatat pada '+new Date().toLocaleTimeString('id-ID'));
     loadHistory();
   }catch(e){alert('gps-alert','error','Gagal terhubung ke server.');}
@@ -406,7 +433,7 @@ $('btn-leave').onclick=async()=>{
   try{
     const res=await fetch('/api/absen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:currentUser.id,type,note})});
     const data=await res.json();
-    if(!res.ok||!data.ok){alert('gps-alert','error',data.error||'Gagal mengirim pengajuan.');return;}
+    if(!res.ok || (!data.ok && !data.success)){alert('gps-alert','error',data.error||data.message||'Gagal mengirim pengajuan.');return;}
     alert('gps-alert','success','Pengajuan '+type+' berhasil dikirim.');
     $('leave-note').value='';loadHistory();
   }catch(e){alert('gps-alert','error','Gagal terhubung ke server.');}
@@ -418,13 +445,13 @@ async function loadHistory(){
   try{
     const res=await fetch('/api/riwayat?id='+encodeURIComponent(currentUser.id));
     const data=await res.json();
-    const list=(data.data||[]);
+    const list=Array.isArray(data) ? data : (data.data||[]);
     $('hist-title').textContent='Riwayat Kehadiran';
     if(!list.length){$('hist-body').innerHTML='<div style="color:var(--muted);font-size:13.5px;padding:8px 0">Belum ada riwayat absensi.</div>';return;}
     $('hist-body').innerHTML=list.map(r=>`
       <div class="log-item">
         <span class="log-dot" style="background:${dotColor(r.status)}"></span>
-        <div class="log-body"><div class="t">${esc(r.status)}</div><div class="s">${esc(r.date)} ${esc(r.time||'')}${r.note?' &middot; '+esc(r.note):''}</div></div>
+        <div class="log-body"><div class="t">${esc(r.status)}</div><div class="s">${esc(r.date||r.tanggal)} ${esc(r.time||r.waktu||'')}${r.note||r.keterangan?' &middot; '+esc(r.note||r.keterangan):''}</div></div>
         <span class="badge ${badgeClass(r.status)}">${esc(r.status)}</span>
       </div>`).join('');
   }catch(e){$('hist-body').innerHTML='<div style="color:var(--muted);font-size:13.5px">Gagal memuat riwayat.</div>';}
@@ -435,14 +462,14 @@ async function loadAdmin(){
   try{
     const res=await fetch('/api/rekap');
     const data=await res.json();
-    const rows=data.data||[];
+    const rows=Array.isArray(data) ? data : (data.data||[]);
     let hadir=0,izin=0,sakit=0,alpa=0,belum=0;
     rows.forEach(r=>{const s=(r.status||'').toLowerCase();if(s==='hadir'||s==='masuk')hadir++;else if(s==='izin'||s==='cuti')izin++;else if(s==='sakit')sakit++;else if(s==='alpa')alpa++;else belum++;});
     $('st-hadir').textContent=hadir;$('st-izin').textContent=izin;$('st-sakit').textContent=sakit;$('st-alpa').textContent=alpa;$('st-belum').textContent=belum;$('st-total').textContent=rows.length;
     $('hist-title').textContent='Rekap Seluruh Karyawan';
     if(!rows.length){$('hist-body').innerHTML='<div style="color:var(--muted);font-size:13.5px">Belum ada data karyawan.</div>';return;}
     $('hist-body').innerHTML='<div class="table-wrap"><table><thead><tr><th>ID</th><th>Nama</th><th>Status</th><th>Waktu</th></tr></thead><tbody>'+
-      rows.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.name)}</td><td><span class="badge ${badgeClass(r.status)}">${esc(r.status||'Belum Absen')}</span></td><td style="color:var(--muted)">${esc(r.time||'-')}</td></tr>`).join('')+
+      rows.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.name||r.nama)}</td><td><span class="badge ${badgeClass(r.status)}">${esc(r.status||'Belum Absen')}</span></td><td style="color:var(--muted)">${esc(r.time||r.waktu||'-')}</td></tr>`).join('')+
       '</tbody></table></div>';
   }catch(e){$('hist-body').innerHTML='<div style="color:var(--muted);font-size:13.5px">Gagal memuat rekap.</div>';}
 }

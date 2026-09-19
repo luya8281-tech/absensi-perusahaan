@@ -74,39 +74,55 @@ if (countStmt.get().total === 0) {
   insertMany(seedData);
 }
 
-// 1. LOGIN API (mendukung user dan data untuk kompatibilitas penuh)
+// 1. LOGIN API (kompatibel dengan ok & success, user & data, name & nama)
 app.post("/api/login", (req, res) => {
   const { id, password } = req.body || {};
   if (!id || !password) {
-    return res.status(400).json({ success: false, message: "ID dan Password wajib diisi." });
+    return res.status(400).json({ ok: false, success: false, error: "ID dan Password wajib diisi.", message: "ID dan Password wajib diisi." });
   }
   const normalizedId = String(id).toUpperCase().trim();
   const user = db.prepare("SELECT * FROM karyawan WHERE id = ?").get(normalizedId);
-  if (user && String(user.password) === String(password).trim()) {
-    const userData = { id: user.id, nama: user.nama, role: user.role };
-    res.json({ success: true, user: userData, data: userData });
+  if (user && String(user.password).trim() === String(password).trim()) {
+    const userData = {
+      id: user.id,
+      nama: user.nama,
+      name: user.nama,
+      role: user.role
+    };
+    res.json({
+      ok: true,
+      success: true,
+      user: userData,
+      data: userData
+    });
   } else {
-    res.status(401).json({ success: false, message: "ID atau Password salah." });
+    res.status(401).json({ ok: false, success: false, error: "ID atau Password salah.", message: "ID atau Password salah." });
   }
 });
 
-// 2. ABSENSI API (mendukung /api/absen dan /api/absensi)
+// 2. ABSENSI API (mendukung kedua format payload: id/type/lat/lng/distance/note & karyawan_id/tipe/latitude/...)
 const handleAbsen = (req, res) => {
-  const { karyawan_id, tipe, latitude, longitude, keterangan } = req.body || {};
-  let status = req.body ? req.body.status : null;
-  let jarak_meter = req.body ? req.body.jarak_meter : null;
+  const body = req.body || {};
+  const karyawan_id = body.karyawan_id || body.id;
+  const tipe = body.tipe || body.type;
+  const latitude = body.latitude !== undefined ? body.latitude : body.lat;
+  const longitude = body.longitude !== undefined ? body.longitude : body.lng;
+  const jarak_meter = body.jarak_meter !== undefined ? body.jarak_meter : body.distance;
+  const keterangan = body.keterangan !== undefined ? body.keterangan : body.note;
+  let status = body.status;
 
   if (!karyawan_id || !tipe) {
-    return res.status(400).json({ success: false, message: "Data absensi tidak lengkap (karyawan_id dan tipe wajib)." });
+    return res.status(400).json({ ok: false, success: false, error: "Data absensi tidak lengkap (ID dan Tipe wajib).", message: "Data absensi tidak lengkap." });
   }
 
+  const tipeLower = String(tipe).toLowerCase();
   if (!status) {
-    if (tipe === "izin" || tipe === "sakit" || tipe === "cuti") {
+    if (tipeLower === "izin" || tipeLower === "sakit" || tipeLower === "cuti") {
       status = tipe.charAt(0).toUpperCase() + tipe.slice(1);
     } else if (jarak_meter !== undefined && jarak_meter !== null) {
-      status = Number(jarak_meter) <= 50 ? "Hadir" : `Ditolak (Jarak ${Math.round(jarak_meter)}m)`;
+      status = Number(jarak_meter) <= 50 ? (tipeLower === "pulang" ? "Pulang" : "Hadir") : `Ditolak (Jarak ${Math.round(jarak_meter)}m)`;
     } else {
-      status = "Hadir";
+      status = tipeLower === "pulang" ? "Pulang" : "Hadir";
     }
   }
 
@@ -119,28 +135,78 @@ const handleAbsen = (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(karyawan_id, tanggal, waktu, tipe, status, latitude || null, longitude || null, jarak_meter || null, keterangan || null);
 
-  res.json({ success: true, message: "Absensi berhasil dicatat.", status, data: { karyawan_id, tanggal, waktu, tipe, status, jarak_meter } });
+  res.json({
+    ok: true,
+    success: true,
+    message: "Absensi berhasil dicatat.",
+    status,
+    data: { karyawan_id, tanggal, waktu, tipe, status, jarak_meter }
+  });
 };
 
 app.post("/api/absen", handleAbsen);
 app.post("/api/absensi", handleAbsen);
 
-// 3. RIWAYAT PER KARYAWAN
-app.get("/api/riwayat/:karyawan_id", (req, res) => {
-  const { karyawan_id } = req.params;
-  const rows = db.prepare("SELECT * FROM absensi WHERE karyawan_id = ? ORDER BY tanggal DESC, waktu DESC").all(karyawan_id);
-  res.json({ success: true, data: rows });
-});
+// 3. RIWAYAT PER KARYAWAN (mendukung /api/riwayat/:id dan /api/riwayat?id=...)
+const handleRiwayat = (req, res) => {
+  const id = req.params.karyawan_id || req.query.id;
+  if (!id) {
+    return res.json({ ok: true, success: true, data: [] });
+  }
+  const rows = db.prepare("SELECT * FROM absensi WHERE karyawan_id = ? ORDER BY tanggal DESC, waktu DESC").all(id);
+  const formatted = rows.map(r => ({
+    id: r.id,
+    karyawan_id: r.karyawan_id,
+    tanggal: r.tanggal,
+    date: r.tanggal,
+    waktu: r.waktu,
+    time: r.waktu,
+    tipe: r.tipe,
+    type: r.tipe,
+    status: r.status,
+    latitude: r.latitude,
+    longitude: r.longitude,
+    jarak_meter: r.jarak_meter,
+    distance: r.jarak_meter,
+    keterangan: r.keterangan,
+    note: r.keterangan
+  }));
+  res.json({ ok: true, success: true, data: formatted });
+};
 
-// 4. REKAP SELURUH KARYAWAN (mengembalikan array agar kompatibel dengan .map() dan .filter())
+app.get("/api/riwayat/:karyawan_id", handleRiwayat);
+app.get("/api/riwayat", handleRiwayat);
+
+// 4. REKAP SELURUH KARYAWAN (kompatibel dengan format array lama dan object data baru)
 const handleRekap = (req, res) => {
   const rows = db.prepare(`
     SELECT k.id, k.nama, a.tanggal, a.waktu, a.tipe, a.status, a.jarak_meter, a.keterangan
     FROM karyawan k
-    LEFT JOIN absensi a ON k.id = a.karyawan_id
-    ORDER BY a.tanggal DESC, a.waktu DESC
-  `).all();
-  res.json(rows);
+    LEFT JOIN absensi a ON k.id = a.karyawan_id AND a.tanggal = date('now', 'localtime')
+    ORDER BY k.id ASC
+  `).all().map(r => ({
+    id: r.id,
+    nama: r.nama,
+    name: r.nama,
+    tanggal: r.tanggal,
+    date: r.tanggal,
+    waktu: r.waktu,
+    time: r.waktu,
+    tipe: r.tipe,
+    type: r.tipe,
+    status: r.status || "Belum Absen",
+    jarak_meter: r.jarak_meter,
+    distance: r.jarak_meter,
+    keterangan: r.keterangan,
+    note: r.keterangan
+  }));
+
+  // Jika diminta format murni array atau via endpoint /api/admin/rekap
+  if (req.query.format === 'array') {
+    return res.json(rows);
+  }
+
+  res.json({ ok: true, success: true, data: rows });
 };
 
 app.get("/api/rekap", handleRekap);
@@ -148,8 +214,12 @@ app.get("/api/admin/rekap", handleRekap);
 
 // 5. LIST KARYAWAN
 app.get("/api/karyawan", (req, res) => {
-  const rows = db.prepare("SELECT id, nama, role FROM karyawan ORDER BY id ASC").all();
-  res.json(rows);
+  const rows = db.prepare("SELECT id, nama, role FROM karyawan ORDER BY id ASC").all().map(r => ({ ...r, name: r.nama }));
+  res.json({ ok: true, success: true, data: rows });
+});
+app.get("/api/employees", (req, res) => {
+  const rows = db.prepare("SELECT id, nama, role FROM karyawan ORDER BY id ASC").all().map(r => ({ ...r, name: r.nama }));
+  res.json({ ok: true, success: true, data: rows });
 });
 
 // 6. JALANKAN SERVER HTTP (PORT 3005)
@@ -157,7 +227,7 @@ http.createServer(app).listen(PORT, "0.0.0.0", () => {
   console.log(`Server Absensi HTTP berjalan di http://0.0.0.0:${PORT}`);
 });
 
-// 7. JALANKAN SERVER HTTPS (PORT 3006) JIKA SERTIFIKAT TERSEDIA
+// 7. JALANKAN SERVER HTTPS (PORT 3006)
 try {
   const keyPath = path.join(__dirname, "key.pem");
   const certPath = path.join(__dirname, "cert.pem");
